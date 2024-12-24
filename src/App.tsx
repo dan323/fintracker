@@ -8,11 +8,13 @@ import { Transaction } from "./models/transaction";
 import { findDuplicates } from "./utils/deduplicate";
 import { loadFile, saveFile, useFilteredTransactions } from "./utils/transaction";
 import "./App.css";
+import TabSelector from "./components/TabSelector";
+import Analytics from "./components/Analytics";
 
 const App: React.FC = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [duplicates, setDuplicates] = useState<Transaction[]>([]);
-  const [activeTab, setActiveTab] = useState<"table" | "chart">("table");
+  const [activeTab, setActiveTab] = useState<string>("table");
 
   const filteredTransactions = useFilteredTransactions(transactions);
   // Load transactions from a local JSON or msgpack file
@@ -73,20 +75,7 @@ const App: React.FC = () => {
         <CsvUploader onUpload={handleUpload} />
       </div>
       <Filtering />
-      <div className="tabs">
-        <button
-          className={`tab-button ${activeTab === "table" ? "active" : ""}`}
-          onClick={() => setActiveTab("table")}
-        >
-          Transacciones
-        </button>
-        <button
-          className={`tab-button ${activeTab === "chart" ? "active" : ""}`}
-          onClick={() => setActiveTab("chart")}
-        >
-          Gr&aacute;fica
-        </button>
-      </div>
+      <TabSelector activeTab={activeTab} setActiveTab={setActiveTab} />
       <div className="tab-content">
         {activeTab === "table" && (
           <><TransactionTable
@@ -108,6 +97,7 @@ const App: React.FC = () => {
           )}</>
         )}
         {activeTab === "chart" && <TransactionChart transactions={filteredTransactions} />}
+        {activeTab === "pie" && <Analytics transactions={filteredTransactions} />}
       </div>
     </div>
   );

@@ -6,6 +6,14 @@ interface Props {
     onUpload: (transactions: Transaction[]) => void;
 }
 
+interface PreTransaction {
+    amount: string,
+    date: string,
+    description?: string,
+    category?: string,
+    account?: string,
+}
+
 const CsvUploader: React.FC<Props> = ({ onUpload }) => {
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -13,11 +21,11 @@ const CsvUploader: React.FC<Props> = ({ onUpload }) => {
             Papa.parse(file, {
                 header: true,
                 skipEmptyLines: true,
-                complete: (results) => {
-                    const transactions = results.data.map((row: any) => ({
+                complete: (results: Papa.ParseResult<PreTransaction>) => {
+                    const transactions: Transaction[] = results.data.map((row: PreTransaction) => ({
                         id: crypto.randomUUID(),
                         date: row.date,
-                        description: row.description,
+                        description: row.description || "",
                         amount: parseFloat(row.amount),
                         category: row.category || "Sin Categoría",
                         account: row.account || "Desconocida",

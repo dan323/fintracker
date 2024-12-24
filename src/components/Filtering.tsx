@@ -2,9 +2,7 @@ import React, { useState } from 'react';
 import { useFilters } from '../context/FilterContext';
 import { Filters } from '../models/transaction';
 
-interface Props {}
-
-const Filtering: React.FC<Props> = () => {
+const Filtering: React.FC<{}> = () => {
   const { setFilters } = useFilters(); // Access the setFilters method from the context
 
   const [category, setCategory] = useState<string>('');
@@ -44,7 +42,6 @@ const Filtering: React.FC<Props> = () => {
         placeholder="Filtrar por cuenta"
         value={account}
         onChange={(e) => {
-          console.log(e.target.value);
           const newAccount = e.target.value;
           setAccount(newAccount);
           updateFilters({ account: newAccount });

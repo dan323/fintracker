@@ -3,7 +3,7 @@ import { Transaction } from "../models/transaction";
 
 export async function saveTransactionsToFile(transactions: any[], fileHandle: FileSystemFileHandle) {
     const serialized = msgpack.encode(transactions); // Convert transactions to MessagePack binary
-    const writableStream = await fileHandle.createWritable();
+    const writableStream = await (fileHandle as any).createWritable();
     await writableStream.write(serialized); // Write binary data to the file
     await writableStream.close();
 }
