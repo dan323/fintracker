@@ -77,11 +77,6 @@ export const useFilteredTransactions = (transactions: Transaction[]) => {
         if (filters.category && transaction.category !== filters.category) {
             return false;
         }
-        if (filters.type === 'positive' && transaction.amount < 0) {
-            return false;
-        } if (filters.type === 'negative' && transaction.amount > 0) {
-            return false;
-        }
         return true;
     });
 };

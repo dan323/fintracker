@@ -28,10 +28,9 @@
 
 ### **2.1. Gestor de Transacciones**
 
-- Tabla para visualizar transacciones.
-- Importación manual desde CSV.
-- Detección y resolución de duplicados.
-- Soporte para categorías personalizables (opcional).
+- Tabla para visualizar transacciones.✅
+- Detección y resolución de duplicados.✅
+- Soporte para categorías personalizables (opcional).✅
 
 ### **2.2. Sistema de Plug-ins**
 
@@ -40,14 +39,14 @@
 
 ### **2.3. Gestor de Archivos Locales**
 
-- Guardar datos en el sistema de archivos local como JSON.
+- Guardar datos en el sistema de archivos local como JSON u otros.✅
 - Monitorear cambios en el archivo JSON para actualizar la UI (opcional).
 
 ### **2.4. Subida Manual de CSV y Resolución de Duplicados**
 
-- Parsear archivos CSV.
-- Detectar duplicados comparando atributos clave: **fecha**, **descripción**, **monto**, **cuenta**.
-- Proporcionar opciones para manejar duplicados: mantener, reemplazar o ignorar.
+- Parsear archivos CSV.✅ (Not tested)
+- Detectar duplicados comparando atributos clave: **fecha**, **monto**, **cuenta**.✅
+- Proporcionar opciones para manejar duplicados: mantener, reemplazar o ignorar.✅
 
 ---
 

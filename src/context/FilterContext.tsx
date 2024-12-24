@@ -6,12 +6,12 @@ const FilterContext = createContext<{
     filters: Filters;
     setFilters: React.Dispatch<React.SetStateAction<Filters>>;
   }>({
-    filters: {type:""},
+    filters: {},
     setFilters: () => {},
   });
 
   export const FilterProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [filters, setFilters] = useState<Filters>({type:""});
+    const [filters, setFilters] = useState<Filters>({});
 
     return (
         <FilterContext.Provider value={{ filters, setFilters }}>

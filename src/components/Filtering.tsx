@@ -9,7 +9,6 @@ const Filtering: React.FC<{}> = () => {
   const [account, setAccount] = useState<string>('');
   const [startDate, setStartDate] = useState<Date>(new Date('2010-01-01'));
   const [endDate, setEndDate] = useState<Date>(new Date());
-  const [type, setType] = useState<'' | 'positive' | 'negative'>('');
 
   const formatDate = (date: Date): string => {
     const year = String(date.getFullYear()).padStart(4,'0');
@@ -72,18 +71,6 @@ const Filtering: React.FC<{}> = () => {
         onKeyDown={(e) => e.preventDefault()} // Disallow typing
         title="Use the date picker to select a date"
       /></>
-      <select
-        value={type}
-        onChange={(e) => {
-          const newType = e.target.value as '' | 'positive' | 'negative';
-          setType(newType);
-          updateFilters({ type: newType });
-        }}
-      >
-        <option value="">Todos</option>
-        <option value="positive">Ingresos</option>
-        <option value="negative">Gastos</option>
-      </select>
     </div>
   );
 };

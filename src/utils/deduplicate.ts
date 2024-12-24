@@ -8,7 +8,6 @@ export const findDuplicates = (
         existingTransactions.some(
             (existingTx) =>
                 newTx.date === existingTx.date &&
-                newTx.description === existingTx.description &&
                 newTx.amount === existingTx.amount &&
                 newTx.account === existingTx.account
         )

@@ -12,5 +12,4 @@ export interface Filters {
     dateRange?: { start: Date; end: Date };
     account?: string;
     category?: string;
-    type:""|"positive"|"negative";
 }

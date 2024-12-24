@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./transaction-table.css";
 import { Transaction } from "../models/transaction";
 
@@ -9,10 +9,33 @@ interface Props {
 }
 
 const TransactionTable: React.FC<Props> = ({ transactions, onEdit, onDelete }) => {
+  const [type, setType] = useState<""|"positive"|"negative">("");
+  const [txs, setTransactions] = useState<Transaction[]>(transactions);
 
-  const sortedTransactions = transactions.sort((t1, t2) => new Date(t1.date).getTime() - new Date(t2.date).getTime());
+  const sortedTransactions = txs.sort((t1, t2) => new Date(t1.date).getTime() - new Date(t2.date).getTime());
   return (
     <div>
+      <select
+        value={type}
+        onChange={(e) => {
+          const newType = e.target.value as '' | 'positive' | 'negative';
+          setType(newType);
+          setTransactions(transactions.filter((tx) => {
+            if (newType === 'negative') {
+              return tx.amount < 0;
+            } else if (newType === 'positive') {
+              return tx.amount > 0;
+            } else {
+              return true;
+            }
+          }))
+        }}
+      >
+        <option value="">Todos</option>
+        <option value="positive">Ingresos</option>
+        <option value="negative">Gastos</option>
+      </select>
+
       {/* Transaction Table */}
       <table className="transaction-table">
         <thead>
