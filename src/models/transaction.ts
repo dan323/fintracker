@@ -6,3 +6,11 @@ export interface Transaction {
     category: string;
     account: string;
   }
+
+// Define the shape of your filters
+export interface Filters {
+    dateRange?: { start: Date; end: Date };
+    account?: string;
+    category?: string;
+    type:""|"positive"|"negative";
+}

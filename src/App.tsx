@@ -1,21 +1,24 @@
 import React, { useState } from "react";
 import CsvUploader from "./components/CsvUploader";
 import DuplicateResolver from "./components/DuplicateResolver";
+import Filtering from "./components/Filtering";
 import TransactionTable from "./components/TransactionTable";
 import TransactionChart from "./components/TransactionChart";
 import { Transaction } from "./models/transaction";
 import { findDuplicates } from "./utils/deduplicate";
-import { loadFile, saveFile } from "./utils/transaction";
+import { loadFile, saveFile, useFilteredTransactions } from "./utils/transaction";
 import "./App.css";
 
 const App: React.FC = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [duplicates, setDuplicates] = useState<Transaction[]>([]);
+  const [activeTab, setActiveTab] = useState<"table" | "chart">("table");
 
+  const filteredTransactions = useFilteredTransactions(transactions);
   // Load transactions from a local JSON or msgpack file
   const loadTransactions = async () => {
     try {
-      console.log("opening file...");
+      console.log("Opening file...");
       await loadFile().then(setTransactions);
     } catch (error) {
       console.log("No file selected or error loading file:", error);
@@ -69,22 +72,43 @@ const App: React.FC = () => {
         </button>
         <CsvUploader onUpload={handleUpload} />
       </div>
-      <TransactionTable
-        transactions={transactions}
-        onEdit={(transaction: Transaction) => console.log("Edit:", transaction)}
-        onDelete={(id: string) =>
-          setTransactions((prev: Transaction[]) =>
-            prev.filter((tx) => tx.id !== id)
-          )
-        }
-      />
-      <TransactionChart transactions={transactions} />
-      {duplicates.length > 0 && (
-        <DuplicateResolver
-          duplicates={duplicates}
-          onResolve={handleResolveDuplicate}
-        />
-      )}
+      <Filtering />
+      <div className="tabs">
+        <button
+          className={`tab-button ${activeTab === "table" ? "active" : ""}`}
+          onClick={() => setActiveTab("table")}
+        >
+          Transacciones
+        </button>
+        <button
+          className={`tab-button ${activeTab === "chart" ? "active" : ""}`}
+          onClick={() => setActiveTab("chart")}
+        >
+          Gr&aacute;fica
+        </button>
+      </div>
+      <div className="tab-content">
+        {activeTab === "table" && (
+          <><TransactionTable
+            transactions={filteredTransactions}
+            onEdit={(transaction: Transaction) =>
+              console.log("Edit:", transaction)
+            }
+            onDelete={(id: string) =>
+              setTransactions((prev: Transaction[]) =>
+                prev.filter((tx) => tx.id !== id)
+              )
+            }
+          />
+          {duplicates.length > 0 && (
+            <DuplicateResolver
+              duplicates={duplicates}
+              onResolve={handleResolveDuplicate}
+            />
+          )}</>
+        )}
+        {activeTab === "chart" && <TransactionChart transactions={filteredTransactions} />}
+      </div>
     </div>
   );
 };
