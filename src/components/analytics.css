@@ -29,7 +29,7 @@
 }
 
 .toggle-switch {
-    min-width: 120px; /* Ensure it fits "Categorías" */
+    min-width: 180px; /* Ensure it fits "Categorías" */
     height: 35px;
     border-radius: 20px;
     display: flex;
@@ -45,12 +45,12 @@
 }
 
 .toggle-switch.on {
-    background-color: #007bff; /* Blue for "on" */
+    background-color: #0055b1; /* Blue for "on" */
     color: white;
 }
 
 .toggle-switch.off {
-    background-color: #ccc; /* Grey for "off" */
+    background-color: #7ce19a; /* Grey for "off" */
     color: black;
 }
 

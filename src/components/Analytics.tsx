@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { Transaction } from "../models/transaction";
 import "./analytics.css";
+import "./toggle-switch.css";
 import { getColorForTransaction } from "../utils/color";
 import { Props } from "recharts/types/component/DefaultLegendContent";
 

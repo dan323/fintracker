@@ -5,12 +5,12 @@ import {
     Cell,
     XAxis,
     YAxis,
-    CartesianGrid,
     Tooltip,
     Legend,
     ResponsiveContainer,
 } from "recharts";
 import './transaction-chart.css'
+import "./toggle-switch.css";
 import { Transaction } from "../models/transaction";
 
 interface Props {
@@ -87,30 +87,29 @@ const TransactionChart: React.FC<Props> = ({ transactions }: Props) => {
                     className={`toggle-switch ${showRevenue ? "on" : "off"}`}
                     onClick={() => setShowRevenue((prev: boolean) => !prev)}
                 >
-                    <span className="toggle-text">{showRevenue ? "On" : "Off"}</span>
+                    <span className="toggle-text">{showRevenue ? "Ingresos y Gastos" : "Total"}</span>
                 </div>
             </div>
-            <ResponsiveContainer>
-                <BarChart data={chartData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" />
-                    <YAxis tickFormatter={(value: number) => `$${value.toFixed(2)}`} />
-                    <Tooltip formatter={(value: number) => `$${value.toFixed(2)}`} />
-                    <Legend />
-                    {showRevenue && <Bar dataKey="revenue" fill="#4caf50" name="Revenue" />}
-                    {showRevenue && <Bar dataKey="expenditure" fill="#f44336" name="Expenditure" />}
-                    {!showRevenue && <Bar dataKey="profit" name="Profit">
-                        {chartData.map((entry, index) => {
-                            return (
-                                <Cell
-                                    key={`cell-${index}`}
-                                    fill={entry.profit >= 0 ? "#4caf50" : "#f44336"}
-                                />
-                            );
-                        })}
-                    </Bar>}
-                </BarChart>
-            </ResponsiveContainer>
+                <ResponsiveContainer>
+                    <BarChart data={chartData}>
+                        <XAxis dataKey="month" />
+                        <YAxis tickFormatter={(value: number) => `${value.toFixed(2)}€`} width={100} />
+                        <Tooltip formatter={(value: number) => `${value.toFixed(2)}€`} />
+                        {showRevenue && <Legend />}
+                        {showRevenue && <Bar dataKey="revenue" fill="#4caf50" name="Revenue" />}
+                        {showRevenue && <Bar dataKey="expenditure" fill="#f44336" name="Expenditure" />}
+                        {!showRevenue && <Bar dataKey="profit" fill="#000000" name="Profit">
+                            {chartData.map((entry, index) => {
+                                return (
+                                    <Cell
+                                        key={`cell-${index}`}
+                                        fill={entry.profit >= 0 ? "#4caf50" : "#f44336"}
+                                    />
+                                );
+                            })}
+                        </Bar>}
+                    </BarChart>
+                </ResponsiveContainer>
         </div>
     );
 };

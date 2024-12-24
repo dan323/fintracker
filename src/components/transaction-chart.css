@@ -3,40 +3,10 @@
     margin-top: 20px;
 }
 
-.toggle-switch.on {
-    background-color: #007bff;
-    /* Blue for "on" */
-    color: white;
-}
-
-.toggle-switch.off {
-    background-color: #ccc;
-    /* Grey for "off" */
-    color: black;
-}
-
 .chart-controls {
     display: flex;
     align-items: center; /* Ensures vertical alignment of label and toggle */
     justify-content: center; /* Centers the elements horizontally */
     margin-bottom: 20px;
     gap: 10px; /* Adds some space between the label and the toggle */
-}
-
-.toggle-switch {
-    width: 80px;
-    height: 30px;
-    border-radius: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 14px;
-    text-transform: uppercase;
-    transition: background-color 0.3s ease;
-}
-
-.toggle-text {
-    pointer-events: none;
 }

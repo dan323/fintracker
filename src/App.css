@@ -103,7 +103,7 @@
 /* Spacing Between Tabs and Content */
 .tab-content {
   margin-top: 20px; /* Adjust spacing between tabs and content */
-  padding: 15px; /* Optional: padding inside the content area */
+  padding: 50px; /* Optional: padding inside the content area */
   background-color: #ffffff; /* Optional: separate content area background */
   border: 1px solid #ddd; /* Optional: border around content area */
   border-radius: 0 10px 10px 10px; /* Rounded bottom corners */
