@@ -1,0 +1,5 @@
+[user]
+        name = Daniel de la Concepción
+        email = danconsa@hotmail.com
+[core]
+        autocrlf = input
