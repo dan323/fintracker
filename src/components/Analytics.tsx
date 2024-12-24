@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
 import { Transaction } from "../models/transaction";
 import "./analytics.css";
 import "./toggle-switch.css";

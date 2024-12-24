@@ -1,5 +1,5 @@
 import React from "react";
-import "./transactionTable.css";
+import "./transaction-table.css";
 import { Transaction } from "../models/transaction";
 
 interface Props {
@@ -16,7 +16,7 @@ const TransactionTable: React.FC<Props> = ({ transactions, onEdit, onDelete }) =
       {/* Transaction Table */}
       <table className="transaction-table">
         <thead>
-          <tr key="header">
+          <tr key="header-row">
             <th>Fecha</th>
             <th>Descripción</th>
             <th>Monto</th>

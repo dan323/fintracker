@@ -28,7 +28,16 @@ export async function loadTransactionsFromFile(fileHandle: FileSystemFileHandle,
 
 export async function msgpackTransformer(file: File): Promise<Transaction[]> {
     const arrayBuffer = await file.arrayBuffer(); // Read file as an ArrayBuffer
-    return msgpack.decode(new Uint8Array(arrayBuffer)) as Transaction[]; // Decode binary back to JavaScript
+    return (msgpack.decode(new Uint8Array(arrayBuffer)) as Transaction[]).map((tx, index) => {
+        if (tx.id){
+            return tx;
+        } else {
+            return {
+                ...tx,
+                id: String(index),
+            }
+        }
+    }); // Decode binary back to JavaScript
 }
 
 export async function jsonTransformer(file: File): Promise<Transaction[]> {
