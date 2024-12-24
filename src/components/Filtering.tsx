@@ -9,12 +9,19 @@ const Filtering: React.FC<Props> = () => {
 
   const [category, setCategory] = useState<string>('');
   const [account, setAccount] = useState<string>('');
-  const [startDate, setStartDate] = useState<string>('2010-01-01');
-  const [endDate, setEndDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  const [startDate, setStartDate] = useState<Date>(new Date('2010-01-01'));
+  const [endDate, setEndDate] = useState<Date>(new Date());
   const [type, setType] = useState<'' | 'positive' | 'negative'>('');
 
+  const formatDate = (date: Date): string => {
+    const year = String(date.getFullYear()).padStart(4,'0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   const updateFilters = (newFilters: Partial<Filters>) => {
-    setFilters((prev) => ({
+    setFilters((prev: Filters) => ({
       ...prev,
       ...newFilters,
     }));
@@ -37,29 +44,37 @@ const Filtering: React.FC<Props> = () => {
         placeholder="Filtrar por cuenta"
         value={account}
         onChange={(e) => {
+          console.log(e.target.value);
           const newAccount = e.target.value;
           setAccount(newAccount);
           updateFilters({ account: newAccount });
         }}
       />
+      <>
+      <label>Inicio:</label>
       <input
         type="date"
-        value={startDate}
+        value={formatDate(startDate)}
         onChange={(e) => {
-          const newStartDate = e.target.value;
+          const newStartDate = new Date(e.target.value);
           setStartDate(newStartDate);
           updateFilters({ dateRange: { start: newStartDate, end: endDate } });
         }}
-      />
+        onKeyDown={(e) => e.preventDefault()} // Disallow typing
+        title="Use the date picker to select a date"
+      /></><>
+      <label>Fin:</label>
       <input
         type="date"
-        value={endDate}
+        value={formatDate(endDate)}
         onChange={(e) => {
-          const newEndDate = e.target.value;
+          const newEndDate = new Date(e.target.value);
           setEndDate(newEndDate);
           updateFilters({ dateRange: { start: startDate, end: newEndDate } });
         }}
-      />
+        onKeyDown={(e) => e.preventDefault()} // Disallow typing
+        title="Use the date picker to select a date"
+      /></>
       <select
         value={type}
         onChange={(e) => {

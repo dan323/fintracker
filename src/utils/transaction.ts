@@ -64,10 +64,12 @@ export async function loadFile(): Promise<Transaction[]> {
 export const useFilteredTransactions = (transactions: Transaction[]) => {
     const { filters } = useFilters();
 
-    return transactions.filter((transaction) => {
+    return transactions.filter((transaction: Transaction) => {
         if (filters.dateRange) {
             const date = new Date(transaction.date);
-            if (date < filters.dateRange.start || date > filters.dateRange.end) return false;
+            if (date < filters.dateRange.start || date > filters.dateRange.end) {
+                return false;
+            }
         }
         if (filters.account && transaction.account !== filters.account) {
             return false;
