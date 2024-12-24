@@ -1,0 +1,70 @@
+/* Style for the transaction table */
+.transaction-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+    text-align: left;
+}
+
+.transaction-table th,
+.transaction-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.transaction-table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+    color: #333;
+}
+
+.transaction-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.transaction-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+.transaction-table td button {
+    padding: 5px 10px;
+    margin: 0 5px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    color: #fff;
+}
+
+.transaction-table td button:hover {
+    opacity: 0.8;
+}
+
+.transaction-table .edit-btn {
+    background-color: #4caf50;
+}
+
+.transaction-table .delete-btn {
+    background-color: #f44336;
+}
+
+/* Filter bar */
+.filter-bar {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.filter-bar input,
+.filter-bar select {
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 200px;
+}
+
+.filter-bar select {
+    width: 220px;
+}
