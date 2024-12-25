@@ -9,10 +9,18 @@ interface Props {
 }
 
 const TransactionTable: React.FC<Props> = ({ transactions, onEdit, onDelete }) => {
-  const [type, setType] = useState<""|"positive"|"negative">("");
-  const [txs, setTransactions] = useState<Transaction[]>(transactions);
+  const [type, setType] = useState<"" | "positive" | "negative">("");
 
-  const sortedTransactions = txs.sort((t1, t2) => new Date(t1.date).getTime() - new Date(t2.date).getTime());
+  const sortedTransactions = transactions.filter((tx) => {
+    if (type === 'negative') {
+      return tx.amount < 0;
+    } else if (type === 'positive') {
+      return tx.amount > 0;
+    } else {
+      return true;
+    }
+  }).sort((t1, t2) => new Date(t1.date).getTime() - new Date(t2.date).getTime());
+  
   return (
     <div>
       <select
@@ -20,15 +28,6 @@ const TransactionTable: React.FC<Props> = ({ transactions, onEdit, onDelete }) =
         onChange={(e) => {
           const newType = e.target.value as '' | 'positive' | 'negative';
           setType(newType);
-          setTransactions(transactions.filter((tx) => {
-            if (newType === 'negative') {
-              return tx.amount < 0;
-            } else if (newType === 'positive') {
-              return tx.amount > 0;
-            } else {
-              return true;
-            }
-          }))
         }}
       >
         <option value="">Todos</option>
@@ -49,23 +48,26 @@ const TransactionTable: React.FC<Props> = ({ transactions, onEdit, onDelete }) =
           </tr>
         </thead>
         <tbody>
-          {sortedTransactions.map((tx: Transaction) => (
-            <tr key={tx.id}>
-              <td>{tx.date}</td>
-              <td>{tx.description}</td>
-              <td>{tx.amount.toFixed(2)}</td>
-              <td>{tx.category}</td>
-              <td>{tx.account}</td>
-              <td>
-                <button className="edit-btn" onClick={() => onEdit(tx)}>
-                  Editar
-                </button>
-                <button className="delete-btn" onClick={() => onDelete(tx.id)}>
-                  Eliminar
-                </button>
-              </td>
-            </tr>
-          ))}
+          {sortedTransactions.map((tx: Transaction) => {
+            console.log("Rendering row for transaction:", tx);
+            return (
+              <tr key={tx.id}>
+                <td>{tx.date}</td>
+                <td>{tx.description}</td>
+                <td>{tx.amount.toFixed(2)}</td>
+                <td>{tx.category}</td>
+                <td>{tx.account}</td>
+                <td>
+                  <button className="edit-btn" onClick={() => onEdit(tx)}>
+                    Editar
+                  </button>
+                  <button className="delete-btn" onClick={() => onDelete(tx.id)}>
+                    Eliminar
+                  </button>
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>
