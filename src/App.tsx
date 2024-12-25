@@ -10,7 +10,7 @@ import { loadFile, saveFile, useFilteredTransactions } from "./utils/transaction
 import "./App.css";
 import TabSelector from "./components/TabSelector";
 import Analytics from "./components/Analytics";
-import { BrowserRouter, Router } from "react-router-dom/dist";
+import { BrowserRouter } from "react-router-dom";
 
 const App: React.FC = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -18,6 +18,7 @@ const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>("table");
 
   const filteredTransactions = useFilteredTransactions(transactions);
+
   // Load transactions from a local JSON or msgpack file
   const loadTransactions = async () => {
     try {
@@ -65,43 +66,50 @@ const App: React.FC = () => {
 
   return (
     <BrowserRouter basename="/fintrack">
-    <div className="app-container">
-      <h1 className="app-title">Finanzas personales</h1>
-      <div className="app-controls">
-        <button className="action-button" onClick={loadTransactions}>
-          Subir movimientos
-        </button>
-        <button className="action-button" onClick={saveTransactions}>
-          Guardar movimientos
-        </button>
-        <CsvUploader onUpload={handleUpload} />
+      <div className="app-container">
+        <h1 className="app-title">Finanzas personales</h1>
+        <div className="app-controls">
+          <button className="action-button" onClick={loadTransactions}>
+            Subir movimientos
+          </button>
+          <button className="action-button" onClick={saveTransactions}>
+            Guardar movimientos
+          </button>
+          <CsvUploader onUpload={handleUpload} />
+        </div>
+        <Filtering />
+        <TabSelector activeTab={activeTab} setActiveTab={setActiveTab} />
+        <div className="tab-content">
+          {activeTab === "table" && (
+            <>
+              <TransactionTable
+                transactions={filteredTransactions}
+                onEdit={(transaction: Transaction) =>
+                  console.log("Edit:", transaction)
+                }
+                onDelete={(id: string) =>
+                  setTransactions((prev) =>
+                    prev.filter((tx) => tx.id !== id)
+                  )
+                }
+              />
+              {duplicates.length > 0 && (
+                <DuplicateResolver
+                  duplicates={duplicates}
+                  onResolve={handleResolveDuplicate}
+                />
+              )}
+            </>
+          )}
+          {activeTab === "chart" && (
+            <TransactionChart transactions={filteredTransactions} />
+          )}
+          {activeTab === "pie" && (
+            <Analytics transactions={filteredTransactions} />
+          )}
+        </div>
       </div>
-      <Filtering />
-      <TabSelector activeTab={activeTab} setActiveTab={setActiveTab} />
-      <div className="tab-content">
-        {activeTab === "table" && (
-          <><TransactionTable
-            transactions={filteredTransactions}
-            onEdit={(transaction: Transaction) =>
-              console.log("Edit:", transaction)
-            }
-            onDelete={(id: string) =>
-              setTransactions((prev: Transaction[]) =>
-                prev.filter((tx) => tx.id !== id)
-              )
-            }
-          />
-          {duplicates.length > 0 && (
-            <DuplicateResolver
-              duplicates={duplicates}
-              onResolve={handleResolveDuplicate}
-            />
-          )}</>
-        )}
-        {activeTab === "chart" && <TransactionChart transactions={filteredTransactions} />}
-        {activeTab === "pie" && <Analytics transactions={filteredTransactions} />}
-      </div>
-    </div></BrowserRouter>
+    </BrowserRouter>
   );
 };
 
