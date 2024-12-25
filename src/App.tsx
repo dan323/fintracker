@@ -64,13 +64,13 @@ const App: React.FC = () => {
 
   return (
     <div className="app-container">
-      <h1 className="app-title">Personal Finance Tracker</h1>
+      <h1 className="app-title">Finanzas personales</h1>
       <div className="app-controls">
         <button className="action-button" onClick={loadTransactions}>
-          Load Transactions
+          Subir movimientos
         </button>
         <button className="action-button" onClick={saveTransactions}>
-          Save Transactions
+          Guardar movimientos
         </button>
         <CsvUploader onUpload={handleUpload} />
       </div>
