@@ -10,6 +10,7 @@ import { loadFile, saveFile, useFilteredTransactions } from "./utils/transaction
 import "./App.css";
 import TabSelector from "./components/TabSelector";
 import Analytics from "./components/Analytics";
+import { BrowserRouter, Router } from "react-router-dom/dist";
 
 const App: React.FC = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -63,6 +64,7 @@ const App: React.FC = () => {
   };
 
   return (
+    <BrowserRouter basename="/fintrack">
     <div className="app-container">
       <h1 className="app-title">Finanzas personales</h1>
       <div className="app-controls">
@@ -99,7 +101,7 @@ const App: React.FC = () => {
         {activeTab === "chart" && <TransactionChart transactions={filteredTransactions} />}
         {activeTab === "pie" && <Analytics transactions={filteredTransactions} />}
       </div>
-    </div>
+    </div></BrowserRouter>
   );
 };
 
