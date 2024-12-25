@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.css": "/static/css/main.b8c4f90c.css",
-    "main.js": "/static/js/main.e867e544.js",
-    "index.html": "/index.html",
-    "main.b8c4f90c.css.map": "/static/css/main.b8c4f90c.css.map",
-    "main.e867e544.js.map": "/static/js/main.e867e544.js.map"
+    "main.css": "/fintracker/static/css/main.b8c4f90c.css",
+    "main.js": "/fintracker/static/js/main.e867e544.js",
+    "index.html": "/fintracker/index.html",
+    "main.b8c4f90c.css.map": "/fintracker/static/css/main.b8c4f90c.css.map",
+    "main.e867e544.js.map": "/fintracker/static/js/main.e867e544.js.map"
   },
   "entrypoints": [
     "static/css/main.b8c4f90c.css",
