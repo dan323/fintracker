@@ -65,7 +65,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <BrowserRouter basename="/fintrack">
+    <BrowserRouter basename="/fintracker">
       <div className="app-container">
         <h1 className="app-title">Finanzas personales</h1>
         <div className="app-controls">
