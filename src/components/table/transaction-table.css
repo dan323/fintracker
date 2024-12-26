@@ -1,0 +1,107 @@
+/* Style for the transaction table */
+.transaction-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+    text-align: left;
+}
+
+.transaction-table th,
+.transaction-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.transaction-table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+    color: #333;
+}
+
+.transaction-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.transaction-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+.transaction-table td button {
+    padding: 5px 10px;
+    margin: 0 5px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    color: #fff;
+}
+
+.transaction-table td button:hover {
+    opacity: 0.8;
+}
+
+.transaction-table .edit-btn {
+    background-color: #4caf50;
+}
+
+.transaction-table .delete-btn {
+    background-color: #f44336;
+}
+
+/* Style for the select dropdown */
+select {
+    display: inline-block;
+    font-size: 16px;
+    padding: 5px 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  
+  select:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  }
+  
+  option {
+    font-size: 16px;
+    padding: 5px;
+  }
+  
+  /* Add some spacing around the select for better layout */
+  select {
+    margin-bottom: 15px;
+  }
+  
+  /* Toggle Container */
+.toggle-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Vertically align label and toggle switch */
+    justify-content: center; /* Center the elements horizontally */
+    margin-bottom: 20px; /* Add space below the toggle */
+    gap: 10px; /* Space between the label and toggle switch */
+  }
+  
+  .toggle-switch {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+  }
+  
+  .toggle-switch:hover {
+    background-color: #02c705;
+  }
+  
+  /* Styles for the span element */
+.toggle-span {
+    font-size: 1.5rem; /* Adjusts the font size to be larger */
+    font-weight: bold; /* Makes the font bold */
+    margin-top: 10px; /* Adds spacing between the toggle switches and the span */
+    display: block; /* Ensures the span is on a new line */
+    text-align: center; /* Optional: Centers the text */
+  }

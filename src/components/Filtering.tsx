@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useFilters } from '../context/FilterContext';
 import { Filters } from '../models/transaction';
+import "./filter.css"
 
 const Filtering: React.FC<{}> = () => {
   const { setFilters } = useFilters(); // Access the setFilters method from the context

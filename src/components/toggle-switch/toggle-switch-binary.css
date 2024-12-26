@@ -1,0 +1,9 @@
+.toggle-switch.on {
+    background-color: #0055b1; /* Blue for "on" */
+    color: white;
+}
+
+.toggle-switch.off {
+    background-color: #7ce19a; /* Grey for "off" */
+    color: black;
+}

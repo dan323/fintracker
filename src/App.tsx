@@ -2,14 +2,14 @@ import React, { useState } from "react";
 import CsvUploader from "./components/CsvUploader";
 import DuplicateResolver from "./components/DuplicateResolver";
 import Filtering from "./components/Filtering";
-import TransactionTable from "./components/TransactionTable";
-import TransactionChart from "./components/TransactionChart";
+import TransactionTable from "./components/table/TransactionTable";
+import PieChartCategoryAccount from "./components/pie-charts/PieChartCategoryAccount";
+import TransactionChart from "./components/bar-charts/TransactionChart";
 import { Transaction } from "./models/transaction";
 import { findDuplicates } from "./utils/deduplicate";
 import { loadFile, saveFile, useFilteredTransactions } from "./utils/transaction";
 import "./App.css";
 import TabSelector from "./components/TabSelector";
-import Analytics from "./components/Analytics";
 import { BrowserRouter } from "react-router-dom";
 
 const App: React.FC = () => {
@@ -105,7 +105,7 @@ const App: React.FC = () => {
             <TransactionChart transactions={filteredTransactions} />
           )}
           {activeTab === "pie" && (
-            <Analytics transactions={filteredTransactions} />
+            <PieChartCategoryAccount transactions={filteredTransactions} />
           )}
         </div>
       </div>

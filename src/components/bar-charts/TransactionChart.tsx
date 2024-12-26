@@ -9,9 +9,9 @@ import {
     Legend,
     ResponsiveContainer,
 } from "recharts";
+import Toggle from "../toggle-switch/Toggle";
 import './transaction-chart.css'
-import "./toggle-switch.css";
-import { Transaction } from "../models/transaction";
+import { Transaction } from "../../models/transaction";
 
 interface Props {
     transactions: Transaction[];
@@ -80,25 +80,20 @@ const TransactionChart: React.FC<Props> = ({ transactions }: Props) => {
         });
 
     return (
-        <div style={{ width: "100%", height: 300 }}>
-            <div className="chart-controls">
-                <label>Dividir en gastos e ingresos</label>
-                <div
-                    className={`toggle-switch ${showRevenue ? "on" : "off"}`}
-                    onClick={() => setShowRevenue((prev: boolean) => !prev)}
-                >
-                    <span className="toggle-text">{showRevenue ? "Ingresos y Gastos" : "Total"}</span>
-                </div>
-            </div>
+        <div>
+
+            <Toggle className="chart-controls" label="siendo mostrados" onToggle={setShowRevenue}
+                textOn="Ingresos y Gastos" textOff="Totales" />
+            <div style={{ width: "100%", height: 300 }}>
                 <ResponsiveContainer>
                     <BarChart data={chartData}>
                         <XAxis dataKey="month" />
                         <YAxis tickFormatter={(value: number) => `${value.toFixed(2)}€`} width={100} />
                         <Tooltip formatter={(value: number) => `${value.toFixed(2)}€`} />
                         {showRevenue && <Legend />}
-                        {showRevenue && <Bar dataKey="revenue" fill="#4caf50" name="Revenue" />}
-                        {showRevenue && <Bar dataKey="expenditure" fill="#f44336" name="Expenditure" />}
-                        {!showRevenue && <Bar dataKey="profit" fill="#000000" name="Profit">
+                        {showRevenue && <Bar dataKey="revenue" fill="#4caf50" name="Ingresos" />}
+                        {showRevenue && <Bar dataKey="expenditure" fill="#f44336" name="Gastos" />}
+                        {!showRevenue && <Bar dataKey="profit" fill="#000000" name="Totales">
                             {chartData.map((entry, index) => {
                                 return (
                                     <Cell
@@ -110,6 +105,7 @@ const TransactionChart: React.FC<Props> = ({ transactions }: Props) => {
                         </Bar>}
                     </BarChart>
                 </ResponsiveContainer>
+            </div>
         </div>
     );
 };

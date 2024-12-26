@@ -33,3 +33,13 @@
     overflow: visible; /* Ensure text is fully visible */
     text-overflow: unset; /* Remove ellipsis */
 }
+
+/* Styles for the span element */
+.toggle-span {
+    flex-direction: row;
+    display: flex;
+    font-size: 1.5rem; /* Adjusts the font size to be larger */
+    font-weight: bold; /* Makes the font bold */
+    margin-top: 10px; /* Adds spacing between the toggle switches and the span */
+    text-align: center; /* Optional: Centers the text */
+  }

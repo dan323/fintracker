@@ -1,16 +1,16 @@
 import React, { useState } from "react";
 import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
-import { Transaction } from "../models/transaction";
-import "./analytics.css";
-import "./toggle-switch.css";
-import { getColorForTransaction } from "../utils/color";
+import { Transaction } from "../../models/transaction";
+import Toggle from "../toggle-switch/Toggle";
+import "./pie-charts.css";
+import { getColorForTransaction } from "../../utils/color";
 import { Props } from "recharts/types/component/DefaultLegendContent";
 
 interface AnalyticsProps {
     transactions: Transaction[];
 }
 
-const Analytics: React.FC<AnalyticsProps> = ({ transactions }: AnalyticsProps) => {
+const PieChartCategoryAccount: React.FC<AnalyticsProps> = ({ transactions }: AnalyticsProps) => {
     const [showByCategory, setShowByCategory] = useState(true);
     const [colors, setColors] = useState<Record<string, { r: number; g: number; b: number }>>({});
 
@@ -83,17 +83,8 @@ const Analytics: React.FC<AnalyticsProps> = ({ transactions }: AnalyticsProps) =
 
     return (
         <div className="analytics-container">
-            <div className="analytics-toggle">
-                <label>Agrupar por</label>
-                <div
-                    className={`toggle-switch ${showByCategory ? "on" : "off"}`}
-                    onClick={() => setShowByCategory((prev) => !prev)}
-                >
-                    <span className="toggle-text">
-                        {showByCategory ? "Categorías" : "Cuentas"}
-                    </span>
-                </div>
-            </div>
+            <Toggle className="analytics-toggle" label="siendo agrupadas" onToggle={(status: boolean) => setShowByCategory(status)}
+            textOff="Cuentas" textOn="Categorías" />
             <div className="pie-charts">
                 <div className="chart">
                     <h3>Ingresos</h3>
@@ -166,4 +157,4 @@ const Analytics: React.FC<AnalyticsProps> = ({ transactions }: AnalyticsProps) =
     );
 };
 
-export default Analytics;
+export default PieChartCategoryAccount;

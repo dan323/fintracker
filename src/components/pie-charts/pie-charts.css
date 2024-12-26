@@ -22,6 +22,7 @@
 
 .analytics-toggle {
     display: flex;
+    flex-direction: column;
     align-items: center; /* Vertically align label and toggle switch */
     justify-content: center; /* Center the elements horizontally */
     margin-bottom: 20px; /* Add space below the toggle */

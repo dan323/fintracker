@@ -5,6 +5,7 @@
 
 .chart-controls {
     display: flex;
+    flex-direction: column;
     align-items: center; /* Ensures vertical alignment of label and toggle */
     justify-content: center; /* Centers the elements horizontally */
     margin-bottom: 20px;

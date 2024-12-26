@@ -1,4 +1,5 @@
 import React from 'react';
+import "./tabs.css"
 
 interface TabSelectorProp {
     activeTab: string,
@@ -24,7 +25,7 @@ const TabSelector: React.FC<TabSelectorProp> = ({ activeTab, setActiveTab }: Tab
                 className={`tab-button ${activeTab === "pie" ? "active" : ""}`}
                 onClick={() => setActiveTab("pie")}
             >
-                Ingresos y Gastos por categor&iacute;as
+                Ingresos y Gastos por categor&iacute;as/cuentas
             </button>
         </div>
     );

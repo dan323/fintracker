@@ -1,0 +1,20 @@
+/* Filter bar */
+.filter-bar {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.filter-bar input,
+.filter-bar select {
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 200px;
+}
+
+.filter-bar select {
+    width: 220px;
+}

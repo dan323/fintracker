@@ -54,51 +54,6 @@
   cursor: not-allowed;
 }
 
-/* Tabs Section */
-.tabs {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  background-color: #f8f9fa;
-  padding: 0;
-  margin: 0;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  border-bottom: 2px solid #ddd;
-}
-
-/* Tab Button Styling */
-.tab-button {
-  flex: 1;
-  padding: 10px 20px;
-  font-size: 1rem;
-  font-weight: bold;
-  text-align: center;
-  color: #555;
-  background-color: #f8f9fa;
-  border: 1px solid #ddd;
-  border-bottom: none;
-  border-radius: 10px 10px 0 0; /* Rounded top corners */
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.tab-button:hover {
-  background-color: #e9ecef;
-}
-
-.tab-button.active {
-  color: #007bff;
-  background-color: #ffffff;
-  border-color: #ddd;
-  border-bottom: 2px solid white; /* Seamless integration */
-  z-index: 2; /* Bring the active tab above others */
-}
-
-.tab-button:focus {
-  outline: none;
-}
 
 /* Spacing Between Tabs and Content */
 .tab-content {
@@ -107,19 +62,4 @@
   background-color: #ffffff; /* Optional: separate content area background */
   border: 1px solid #ddd; /* Optional: border around content area */
   border-radius: 0 10px 10px 10px; /* Rounded bottom corners */
-}
-
-/* Tab Navigation Responsiveness */
-@media (max-width: 768px) {
-  .tab-button {
-    font-size: 0.9rem;
-    padding: 8px 15px;
-  }
-}
-
-@media (max-width: 480px) {
-  .tab-button {
-    font-size: 0.8rem;
-    padding: 5px 10px;
-  }
 }
