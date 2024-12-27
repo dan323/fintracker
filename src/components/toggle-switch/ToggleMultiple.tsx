@@ -21,6 +21,7 @@ const ToggleMultiple = <T extends string | number | symbol | boolean>({
     return (<div className={className}>
         {states.map((st) => {
             const div = (<div
+                key={`toggle-${st.toString()}`}
                 className={`toggle-switch ${st.toString()}`}
                 onClick={() => {
                     toggle((_:T) => {

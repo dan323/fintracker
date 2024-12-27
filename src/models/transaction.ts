@@ -1,3 +1,5 @@
+import { Category } from "./categories";
+
 export interface Transaction {
     id: string;
     date: string; // Formato ISO (YYYY-MM-DD)
@@ -5,11 +7,12 @@ export interface Transaction {
     amount: number;
     category: string;
     account: string;
+    bussines?: boolean;
   }
 
 // Define the shape of your filters
 export interface Filters {
     dateRange?: { start: Date; end: Date };
     account?: string;
-    category?: string;
+    categories?: Category[];
 }

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import CarbonFootPrint from "./components/line-charts/CarbonFootPrint";
 import CsvUploader from "./components/CsvUploader";
 import DuplicateResolver from "./components/DuplicateResolver";
 import Filtering from "./components/Filtering";
@@ -106,6 +107,9 @@ const App: React.FC = () => {
           )}
           {activeTab === "pie" && (
             <PieChartCategoryAccount transactions={filteredTransactions} />
+          )}
+          {activeTab === "carbon" && (
+            <CarbonFootPrint transactions={filteredTransactions} />
           )}
         </div>
       </div>

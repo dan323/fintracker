@@ -27,6 +27,12 @@ const TabSelector: React.FC<TabSelectorProp> = ({ activeTab, setActiveTab }: Tab
             >
                 Ingresos y Gastos por categor&iacute;as/cuentas
             </button>
+            <button
+                className={`tab-button ${activeTab === "carbon" ? "active" : ""}`}
+                onClick={() => setActiveTab("carbon")}
+            >
+                Huella de carbono
+            </button>
         </div>
     );
 }

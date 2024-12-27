@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { Transaction } from "../models/transaction";
+import { Category } from "../models/categories";
 import { saveTransactionsToFile, loadTransactionsFromFile, saveTransactionsFallback, msgpackTransformer, jsonTransformer } from "./message-pack";
 import { useFilters } from "../context/FilterContext";
 
@@ -93,25 +94,71 @@ export async function loadFile(): Promise<Transaction[]> {
     }
 }
 
+/**
+ * Helper function to check if a category matches or belongs to any of the provided categories or their subcategories.
+ */
+const isCategoryMatch = (
+    transactionCategory: string,
+    filterCategories: Category[]
+): boolean => {
+    // Iterate over the list of categories and check if the transactionCategory matches any category or its subcategories
+    return filterCategories.some((filterCategory) =>
+        matchCategory(transactionCategory, filterCategory)
+    );
+};
+
+/**
+ * Helper function to recursively check if a category matches or belongs to its subcategories.
+ */
+const matchCategory = (
+    transactionCategory: string,
+    category: Category
+): boolean => {
+    if (transactionCategory === category.name) {
+        return true;
+    }
+
+    if (category.subcategories) {
+        return category.subcategories.some((sub) =>
+            matchCategory(transactionCategory, sub)
+        );
+    }
+
+    return false;
+};
+
 export const useFilteredTransactions = (transactions: Transaction[]) => {
     const { filters } = useFilters();
 
     return useMemo(() => {
-        console.log("Recomputing filtered transactions...");
-        return transactions.filter((transaction: Transaction) => {
+        if (process.env.NODE_ENV === 'development') {
+            console.log("Recomputing filtered transactions...");
+        }
+
+        return transactions.filter((transaction) => {
+            // Filter by date range
             if (filters.dateRange) {
-                const date = new Date(transaction.date);
-                if (date < filters.dateRange.start || date > filters.dateRange.end) {
+                const transactionDate = new Date(transaction.date);
+                const { start, end } = filters.dateRange;
+                if (transactionDate < start || transactionDate > end) {
                     return false;
                 }
             }
+
+            // Filter by account
             if (filters.account && transaction.account !== filters.account) {
                 return false;
             }
-            if (filters.category && transaction.category !== filters.category) {
-                return false;
+
+            // Filter by category or subcategory
+            if (filters.categories && filters.categories.length > 0) {
+                const filterCategories = filters.categories;
+                if (!isCategoryMatch(transaction.category, filterCategories)) {
+                    return false;
+                }
             }
-            return true;
+
+            return true; // Passes all filters
         });
-    },[transactions,filters]);
+    }, [transactions, filters]);
 };

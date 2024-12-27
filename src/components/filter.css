@@ -18,3 +18,27 @@
 .filter-bar select {
     width: 220px;
 }
+
+.selected-categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 10px;
+}
+
+.category-tag {
+    background-color: #e0e0e0;
+    border-radius: 15px;
+    padding: 5px 10px;
+    display: inline-flex;
+    align-items: center;
+}
+
+.remove-category {
+    background: none;
+    border: none;
+    color: red;
+    cursor: pointer;
+    font-size: 16px;
+    margin-left: 5px;
+}

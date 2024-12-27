@@ -30,12 +30,12 @@
 
 - Tabla para visualizar transacciones.✅
 - Detección y resolución de duplicados.✅
-- Soporte para categorías personalizables (opcional).✅
+- Soporte para categorías personalizables (opcional).
 
 ### **2.2. Sistema de Plug-ins**
 
-- Permitir cargar plug-ins en tiempo de ejecución.
-- Cada plug-in debe tener un formato estándar, exportando un método para importar transacciones de su fuente.
+- Create a small backend for security porpuses.
+- Integrate Plaid.
 
 ### **2.3. Gestor de Archivos Locales**
 
@@ -45,46 +45,23 @@
 ### **2.4. Subida Manual de CSV y Resolución de Duplicados**
 
 - Parsear archivos CSV.✅ (Not tested)
-- Detectar duplicados comparando atributos clave: **fecha**, **monto**, **cuenta**.✅
-- Proporcionar opciones para manejar duplicados: mantener, reemplazar o ignorar.✅
+- Detectar duplicados comparando atributos clave: **fecha**, **monto**, **cuenta**.✅ (Not tested)
+- Proporcionar opciones para manejar duplicados: mantener, reemplazar o ignorar.✅ (Not tested)
+
+### **2.5. Calcular la huella de carbono**
+
+- Computar la huella de carbono en función de los gastos.✅
+- Computar la huella de carbono en función del área geográfica
+
+### **2.6. Filtrar por categorías, rango de fechas, fuente del movimiento**
+
+- Filtrar por grupo de categorías.✅
+- Cuando se filtra por todas las subcategorías de una categoría, añadirla al filtrar y borrar las subcategorías (opcional).
+- Filtrar por rango de fechas.✅
+- Filtrar por fuente del movimiento.✅
+
+### **2.7. Hacer mejoras de UI**
+
+### **2.7. Internacinalización del texto**
 
 ---
-
-## **3. Plan de Implementación Detallado**
-
-### **Semana 1: Configuración Inicial**
-
-1. Crear el proyecto React con soporte para TypeScript:
-
-2. Definir el modelo de datos en `src/models/transaction.ts`:
-
-3. Crear un estado inicial con datos mock para las transacciones:
-
-4. Crear la estructura de componentes inicial:
-
-   - **App.tsx**: Punto de entrada.
-   - **TransactionTable.tsx**: Componente para mostrar transacciones.
-   - **CsvUploader.tsx**: Componente para importar transacciones desde CSV.
-
----
-
-### **Semana 2: Gestor de Transacciones**
-
-1. Implementar el componente `TransactionTable`:
-
-2. Implementar el componente `CsvUploader`:
-
----
-
-### **Semana 3: Detección de Duplicados**
-
-1. Implementar la lógica para detectar duplicados en `src/utils/deduplicate.ts`:
-
-2. Crear el componente `DuplicateResolver`:
-
----
-
-### **Semana 4: Integración Final y Pruebas**
-
-Integrar los componentes
-
