@@ -17,10 +17,8 @@
    - Definir interfaces y tipos.
 2. **src/components**:
    - Componentes React modulares.
-3. **src/hooks**:
-   - Hooks personalizados para manejar lógica reutilizable (e.g., manejo de transacciones, detección de duplicados).
-4. **src/plugins**:
-   - Controladores de plug-ins.
+3. **src/context**:
+4. **src/utils**:
 
 ---
 
