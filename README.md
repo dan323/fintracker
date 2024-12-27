@@ -29,6 +29,8 @@
 - Tabla para visualizar transacciones.✅
 - Detección y resolución de duplicados.✅
 - Soporte para categorías personalizables (opcional).
+- Editar transacciones.
+- Borrar transacciones.✅
 
 ### **2.2. Sistema de Plug-ins**
 
