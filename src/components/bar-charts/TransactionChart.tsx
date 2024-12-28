@@ -48,10 +48,13 @@ const TransactionChart: React.FC<Props> = ({ transactions }: Props) => {
                 acc[monthKey] = { month: monthLabel, revenue: 0, expenditure: 0 };
             }
 
-            if (tx.amount > 0) {
-                acc[monthKey].revenue += tx.amount;
-            } else {
-                acc[monthKey].expenditure += Math.abs(tx.amount);
+            // Do not show internal movements
+            if (tx.category !== 'Internal'){
+                if (tx.amount > 0) {
+                    acc[monthKey].revenue += tx.amount;
+                } else {
+                    acc[monthKey].expenditure += Math.abs(tx.amount);
+                }
             }
 
             return acc;
@@ -81,7 +84,6 @@ const TransactionChart: React.FC<Props> = ({ transactions }: Props) => {
 
     return (
         <div>
-
             <Toggle className="chart-controls" label="siendo mostrados" onToggle={setShowRevenue}
                 textOn="Ingresos y Gastos" textOff="Totales" />
             <div style={{ width: "100%", height: 300 }}>

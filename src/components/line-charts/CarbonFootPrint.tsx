@@ -9,7 +9,7 @@ import {
 } from "recharts";
 import './transaction-chart.css'
 import { Transaction } from "../../models/transaction";
-import { categories, Category } from "../../models/categories";
+import { Categories, categories, Category } from "../../models/categories";
 
 interface Props {
     transactions: Transaction[];
@@ -37,7 +37,7 @@ const TransactionChart: React.FC<Props> = ({ transactions }: Props) => {
 
     const emissionsBySubcategories = (category: Category, ammount: number) => { 
         if (category.subcategories) {
-            return category.subcategories.reduce((totalEmission, sub) => {
+            return Object.values(category.subcategories).reduce((totalEmission, sub) => {
                 const subProportion = sub.proportion || 0; // Default to 0 if no proportion is specified
                 if (sub.emissionFactor) {
                     const subEmissionFactor = sub.emissionFactor || 0; // Default to 0 if no emission factor
@@ -57,14 +57,14 @@ const TransactionChart: React.FC<Props> = ({ transactions }: Props) => {
         }
     }
 
-    const findCategoryByName = (categoryName: string, categories: Category[]): Category | null => {
-        for (const category of categories) {
-          if (category.name === categoryName) {
-            return category;
+    const findCategoryByName = (categoryName: string, categories: Categories): Category | null => {
+        for (const category of Object.keys(categories)) {
+          if (category === categoryName) {
+            return categories[category];
           }
       
-          if (category.subcategories) {
-            const foundCategory = findCategoryByName(categoryName, category.subcategories);
+          if (categories[category].subcategories) {
+            const foundCategory = findCategoryByName(categoryName, categories[category].subcategories);
             if (foundCategory) {
               return foundCategory;
             }
@@ -78,7 +78,8 @@ const TransactionChart: React.FC<Props> = ({ transactions }: Props) => {
         if (cat === null) {
             cat = findCategoryByName("Others", findCategoryByName("Miscellaneous", categories).subcategories);
         }
-        return emissionCategory(cat, -tx.amount);
+        const em = emissionCategory(cat, -tx.amount);
+        return em?em:0;
     }
 
     const monthlyData: { [key: string]: Data } = transactions.reduce<Record<string, Data>>(
@@ -99,6 +100,8 @@ const TransactionChart: React.FC<Props> = ({ transactions }: Props) => {
         },
         {}
     );
+
+    console.log("total",Object.values(monthlyData).reduce((a,val) => a + val.carbon, 0));
 
     const chartData: { month: string, carbon: number }[] = Object.values(monthlyData)
         .map((data: Data) => ({
@@ -123,8 +126,8 @@ const TransactionChart: React.FC<Props> = ({ transactions }: Props) => {
             <ResponsiveContainer>
                 <LineChart data={chartData}>
                     <XAxis dataKey="month" />
-                    <YAxis tickFormatter={(value: number) => `${value.toFixed(2)}kg CO2`} width={100} />
-                    <Tooltip formatter={(value: number) => `${value.toFixed(2)}kg CO2`} />
+                    <YAxis tickFormatter={(value: number) => `${value.toFixed(2)}kg CO2e`} width={100} />
+                    <Tooltip formatter={(value: number) => `${value.toFixed(2)}kg CO2e`} />
                     <Line dataKey="carbon" type="monotone" fill="#000000" name="Carbon" />
                 </LineChart>
             </ResponsiveContainer>

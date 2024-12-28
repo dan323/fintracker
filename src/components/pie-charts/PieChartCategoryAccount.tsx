@@ -5,6 +5,7 @@ import Toggle from "../toggle-switch/Toggle";
 import "./pie-charts.css";
 import { getColorForTransaction } from "../../utils/color";
 import { Props } from "recharts/types/component/DefaultLegendContent";
+import { Categories, categories, Category } from "../../models/categories";
 
 interface AnalyticsProps {
     transactions: Transaction[];
@@ -12,6 +13,7 @@ interface AnalyticsProps {
 
 const PieChartCategoryAccount: React.FC<AnalyticsProps> = ({ transactions }: AnalyticsProps) => {
     const [showByCategory, setShowByCategory] = useState(true);
+    const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
     const [colors, setColors] = useState<Record<string, { r: number; g: number; b: number }>>({});
 
     const RADIAN = Math.PI / 180;
@@ -56,9 +58,45 @@ const PieChartCategoryAccount: React.FC<AnalyticsProps> = ({ transactions }: Ana
         );
     };
 
-    // Aggregate data based on the toggle
-    const aggregatedData = transactions.reduce<{ [key: string]: { pos: number; neg: number } }>((acc, tx) => {
-        const key = showByCategory ? tx.category : tx.account;
+    const parentCategory = (cat: string, cats: Categories, parent: string | null): string | null => {
+        for (const category of Object.keys(cats)) {
+            if (category === cat) {
+                return parent ? parent : cat;
+            } else if (cats[category].subcategories) {
+                const found = parentCategory(cat, cats[category].subcategories, parent ? parent : category);
+                if (found) {
+                    return found;
+                }
+            }
+        }
+        return null;
+    };
+
+    const isUnderCategory = (cat: string, selected: string): boolean => {
+        if (cat === selected) {
+            return true;
+        } else {
+            const parent = parentCategory(selected, categories, null);
+            let parentCat: Category = categories[parent];
+            while (parentCat.name !== selected && parentCat.subcategories) {
+                const subCats = parentCat.subcategories;
+                parentCat = subCats[parentCategory(selected, subCats, null)];
+            }
+            return parentCategory(cat, parentCat.subcategories, null) !== null
+        }
+    }
+
+    // Filter transactions based on the selected category
+    const filteredTransactions = selectedCategory
+        ? transactions.filter((tx) => isUnderCategory(tx.category, selectedCategory))
+        : transactions;
+
+    // Aggregate data (separately for income and expenses)
+    const aggregatedData = filteredTransactions.reduce<{ [key: string]: { pos: number; neg: number } }>((acc, tx) => {
+        const key = showByCategory ? (selectedCategory
+            ? tx.category // Show subcategories if a category is selected
+            : parentCategory(tx.category, categories, null)) // Show main categories otherwise
+            : tx.account;
 
         if (!key) return acc;
 
@@ -66,10 +104,12 @@ const PieChartCategoryAccount: React.FC<AnalyticsProps> = ({ transactions }: Ana
             acc[key] = { pos: 0, neg: 0 };
         }
 
-        if (tx.amount > 0) {
-            acc[key].pos += tx.amount; // Revenue
-        } else {
-            acc[key].neg -= tx.amount; // Spendings (convert to positive)
+        if (tx.category !== 'Internal') {
+            if (tx.amount > 0) {
+                acc[key].pos += tx.amount; // Income
+            } else {
+                acc[key].neg -= tx.amount; // Expenses (convert to positive)
+            }
         }
 
         return acc;
@@ -78,78 +118,87 @@ const PieChartCategoryAccount: React.FC<AnalyticsProps> = ({ transactions }: Ana
     const pieData = Object.entries(aggregatedData).map(([key, value]) => ({
         name: key,
         pos: parseFloat(value.pos.toFixed(2)),
-        neg: parseFloat(value.neg.toFixed(2))
+        neg: parseFloat(value.neg.toFixed(2)),
     }));
+
+    // Handle slice clicks for drill-down
+    const handleSliceClick = (data: { name: string }) => {
+        const isParentCategory = Object.keys(categories).some((cat) => cat === data.name);
+        if (isParentCategory) {
+            setSelectedCategory(data.name);
+        }
+    };
 
     return (
         <div className="analytics-container">
-            <Toggle className="analytics-toggle" label="siendo agrupadas" onToggle={(status: boolean) => setShowByCategory(status)}
-            textOff="Cuentas" textOn="Categorías" />
+            {/* Back button to reset drill-down */}
+            {selectedCategory && (
+                <button onClick={() => setSelectedCategory(null)}>Back to All Categories</button>
+            )}
+
+            {/* Toggle for category/account grouping */}
+            <Toggle
+                className="analytics-toggle"
+                label="siendo agrupadas"
+                onToggle={(status: boolean) => setShowByCategory(status)}
+                textOff="Cuentas"
+                textOn="Categorías"
+            />
+
             <div className="pie-charts">
+                {/* Income Chart */}
                 <div className="chart">
-                    <h3>Ingresos</h3>
+                    <h3>{selectedCategory ? `${selectedCategory} (Ingresos)` : "Ingresos (Main Categories)"}</h3>
                     <PieChart width={400} height={400}>
                         <Pie
-                            data={pieData.filter((d) => d.pos > 0).map((d) => {
-                                return { name: d.name, value: d.pos };
-                            })}
+                            data={pieData.filter((d) => d.pos > 0).map((d) => ({ name: d.name, value: d.pos }))}
                             dataKey="value"
                             nameKey="name"
                             cx="50%"
                             cy="50%"
                             outerRadius={150}
                             fill="#8884d8"
-                            label={renderCustomizedLabel}
+                            onClick={(data) => handleSliceClick(data)}
                             labelLine={false}
+                            label={renderCustomizedLabel}
                         >
                             {pieData.map((entry, index) => (
-                                <Cell key={`cell-${index}`} fill={getColorForTransaction(entry.name, true, colors, setColors)} />
+                                <Cell
+                                    key={`cell-${index}`}
+                                    fill={getColorForTransaction(entry.name, true, colors, setColors)}
+                                />
                             ))}
                         </Pie>
-                        <Legend content={renderCustomLegend} />
-                        <Tooltip
-                            contentStyle={{
-                                backgroundColor: "white",
-                                borderColor: "#ccc",
-                                borderRadius: "5px",
-                                color: "black",
-                            }}
-                            itemStyle={{ color: "black" }}
-                            formatter={(value) => `${value}€`}
-                        />
+                        <Legend content={(props: Props) => renderCustomLegend(props)} />
+                        <Tooltip formatter={(value) => `${value}€`} />
                     </PieChart>
                 </div>
+
+                {/* Expense Chart */}
                 <div className="chart">
-                    <h3>Gastos</h3>
+                    <h3>{selectedCategory ? `${selectedCategory} (Gastos)` : "Gastos (Main Categories)"}</h3>
                     <PieChart width={400} height={400}>
                         <Pie
-                            data={pieData.filter((d) => d.neg > 0).map((d) => {
-                                return { name: d.name, value: d.neg };
-                            })}
+                            data={pieData.filter((d) => d.neg > 0).map((d) => ({ name: d.name, value: d.neg }))}
                             dataKey="value"
                             nameKey="name"
                             cx="50%"
                             cy="50%"
                             outerRadius={150}
                             fill="#82ca9d"
-                            label={renderCustomizedLabel}
+                            onClick={(data) => handleSliceClick(data)}
                             labelLine={false}
+                            label={renderCustomizedLabel}
                         >
                             {pieData.map((entry, index) => (
-                                <Cell key={`cell-${index}`} fill={getColorForTransaction(entry.name, false, colors, setColors)} />
+                                <Cell
+                                    key={`cell-${index}`}
+                                    fill={getColorForTransaction(entry.name, false, colors, setColors)}
+                                />
                             ))}
                         </Pie>
-                        <Legend content={renderCustomLegend} />
-                        <Tooltip
-                            contentStyle={{
-                                backgroundColor: "white",
-                                borderColor: "#ccc",
-                                borderRadius: "5px",
-                                color: "black",
-                            }}
-                            itemStyle={{ color: "black" }}
-                            formatter={(value) => `${value}€`}
-                        />
+                        <Legend content={(props: Props) => renderCustomLegend(props)} />
+                        <Tooltip formatter={(value) => `${value}€`} />
                     </PieChart>
                 </div>
             </div>

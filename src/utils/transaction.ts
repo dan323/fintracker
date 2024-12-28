@@ -119,8 +119,8 @@ const matchCategory = (
     }
 
     if (category.subcategories) {
-        return category.subcategories.some((sub) =>
-            matchCategory(transactionCategory, sub)
+        return Object.keys(category.subcategories).some((sub) =>
+            matchCategory(transactionCategory, category.subcategories[sub])
         );
     }
 

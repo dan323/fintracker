@@ -27,7 +27,7 @@ const CsvUploader: React.FC<Props> = ({ onUpload }) => {
                         date: row.date,
                         description: row.description || "",
                         amount: parseFloat(row.amount),
-                        category: row.category || "Sin Categoría",
+                        category: row.category || "Others",
                         account: row.account || "Desconocida",
                     }));
                     onUpload(transactions);

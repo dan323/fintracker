@@ -1,7 +1,7 @@
 import React, { JSX, useState } from 'react';
 import { useFilters } from '../context/FilterContext';
 import { Filters } from '../models/transaction';
-import { Category, categories } from '../models/categories';
+import { Categories, Category, categories } from '../models/categories';
 import "./filter.css";
 
 const Filtering: React.FC = () => {
@@ -26,21 +26,21 @@ const Filtering: React.FC = () => {
   };
 
   // Generate nested options from categories
-  const toOptions = (categories: Category[], prefix: string = ""): JSX.Element[] => {
-    return categories.flatMap((cat) => [
-      <option key={prefix + cat.name} value={cat.name}>
-        {prefix + cat.name}
+  const toOptions = (categories: Categories, prefix: string = ""): JSX.Element[] => {
+    return Object.keys(categories).flatMap((cat) => [
+      <option key={prefix + cat} value={cat}>
+        {prefix + cat}
       </option>,
-      ...(cat.subcategories ? toOptions(cat.subcategories, `${prefix}— `) : []),
+      ...(categories[cat].subcategories ? toOptions(categories[cat].subcategories, `${prefix}— `) : []),
     ]);
   };
 
   // Recursively find a category by name
-  const findByName = (name: string, categories: Category[]): Category | null => {
-    for (const cat of categories) {
-      if (cat.name === name) return cat;
-      if (cat.subcategories) {
-        const found = findByName(name, cat.subcategories);
+  const findByName = (name: string, categories: Categories): Category | null => {
+    for (const cat of Object.keys(categories)) {
+      if (cat === name) return categories[cat];
+      if (categories[cat].subcategories) {
+        const found = findByName(name, categories[cat].subcategories);
         if (found) return found;
       }
     }
