@@ -53,3 +53,31 @@
     overflow: hidden; /* Ensure it doesn't overflow */
     text-overflow: ellipsis; /* Add ellipsis if needed */
 }
+
+.back-to-categories-btn {
+    display: inline-block;
+    background-color: #4caf50; /* Green background */
+    color: white; /* White text */
+    padding: 10px 20px; /* Padding for better click area */
+    margin: 10px 20px; /* Padding for better click area */
+    font-size: 16px; /* Font size for readability */
+    font-weight: bold; /* Emphasize text */
+    text-align: center; /* Center the text */
+    text-decoration: none; /* Remove underline */
+    border: none; /* Remove borders */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    cursor: pointer; /* Pointer cursor for interactivity */
+    transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Smooth hover effects */
+}
+
+.back-to-categories-btn:hover {
+    background-color: #45a049; /* Slightly darker green on hover */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15); /* Enhance shadow on hover */
+}
+
+.back-to-categories-btn:active {
+    background-color: #3e8e41; /* Even darker green when clicked */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Compress shadow on click */
+    transform: translateY(2px); /* Button "press" effect */
+}

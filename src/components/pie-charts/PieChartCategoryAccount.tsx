@@ -16,20 +16,6 @@ const PieChartCategoryAccount: React.FC<AnalyticsProps> = ({ transactions }: Ana
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
     const [colors, setColors] = useState<Record<string, { r: number; g: number; b: number }>>({});
 
-    const RADIAN = Math.PI / 180;
-    const renderCustomizedLabel = ({
-        cx, cy, midAngle, innerRadius, outerRadius, percent, value,
-    }) => {
-        const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-        const x = cx + radius * Math.cos(-midAngle * RADIAN);
-        const y = cy + radius * Math.sin(-midAngle * RADIAN);
-
-        return (
-            <text x={x} y={y} fill="white" textAnchor="middle" dominantBaseline="central">
-                {`${(percent * 100).toFixed(2)}%`}
-            </text>
-        );
-    }
     // Custom legend renderer
     const renderCustomLegend = (props: Props) => {
         const { payload } = props;
@@ -129,11 +115,17 @@ const PieChartCategoryAccount: React.FC<AnalyticsProps> = ({ transactions }: Ana
         }
     };
 
+    const total = pieData.reduce((acc,data) => {
+        acc.pos += data.pos;
+        acc.neg += data.neg;
+        return acc;
+    }, { pos: 0, neg: 0 });
+
     return (
         <div className="analytics-container">
             {/* Back button to reset drill-down */}
             {selectedCategory && (
-                <button onClick={() => setSelectedCategory(null)}>Back to All Categories</button>
+                <button className="back-to-categories-btn" onClick={() => setSelectedCategory(null)}>Back to All Categories</button>
             )}
 
             {/* Toggle for category/account grouping */}
@@ -149,7 +141,7 @@ const PieChartCategoryAccount: React.FC<AnalyticsProps> = ({ transactions }: Ana
                 {/* Income Chart */}
                 <div className="chart">
                     <h3>{selectedCategory ? `${selectedCategory} (Ingresos)` : "Ingresos (Main Categories)"}</h3>
-                    <PieChart width={400} height={400}>
+                    <PieChart width={400} height={700}>
                         <Pie
                             data={pieData.filter((d) => d.pos > 0).map((d) => ({ name: d.name, value: d.pos }))}
                             dataKey="value"
@@ -158,9 +150,8 @@ const PieChartCategoryAccount: React.FC<AnalyticsProps> = ({ transactions }: Ana
                             cy="50%"
                             outerRadius={150}
                             fill="#8884d8"
-                            onClick={(data) => handleSliceClick(data)}
+                            onClick={(data: {name: string}) => handleSliceClick(data)}
                             labelLine={false}
-                            label={renderCustomizedLabel}
                         >
                             {pieData.map((entry, index) => (
                                 <Cell
@@ -170,14 +161,14 @@ const PieChartCategoryAccount: React.FC<AnalyticsProps> = ({ transactions }: Ana
                             ))}
                         </Pie>
                         <Legend content={(props: Props) => renderCustomLegend(props)} />
-                        <Tooltip formatter={(value) => `${value}€`} />
+                        <Tooltip formatter={(value) => `${value}€: ${((value as number)*100/total.pos).toFixed(2)}%`} />
                     </PieChart>
                 </div>
 
                 {/* Expense Chart */}
                 <div className="chart">
                     <h3>{selectedCategory ? `${selectedCategory} (Gastos)` : "Gastos (Main Categories)"}</h3>
-                    <PieChart width={400} height={400}>
+                    <PieChart width={400} height={700}>
                         <Pie
                             data={pieData.filter((d) => d.neg > 0).map((d) => ({ name: d.name, value: d.neg }))}
                             dataKey="value"
@@ -186,9 +177,8 @@ const PieChartCategoryAccount: React.FC<AnalyticsProps> = ({ transactions }: Ana
                             cy="50%"
                             outerRadius={150}
                             fill="#82ca9d"
-                            onClick={(data) => handleSliceClick(data)}
+                            onClick={(data: {name: string}) => handleSliceClick(data)}
                             labelLine={false}
-                            label={renderCustomizedLabel}
                         >
                             {pieData.map((entry, index) => (
                                 <Cell
@@ -198,7 +188,7 @@ const PieChartCategoryAccount: React.FC<AnalyticsProps> = ({ transactions }: Ana
                             ))}
                         </Pie>
                         <Legend content={(props: Props) => renderCustomLegend(props)} />
-                        <Tooltip formatter={(value) => `${value}€`} />
+                        <Tooltip formatter={(value) => `${value}€: ${((value as number)*100/total.neg).toFixed(2)}%`} />
                     </PieChart>
                 </div>
             </div>
