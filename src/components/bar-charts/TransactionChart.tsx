@@ -66,7 +66,7 @@ const TransactionChart: React.FC<Props> = ({ transactions }: Props) => {
         .map((data: Data) => ({
             month: data.month,
             revenue: parseFloat(data.revenue.toFixed(2)), // Ensure proper rounding
-            expenditure: parseFloat((-data.expenditure).toFixed(2)), // Make expenditure positive for chart
+            expenditure: parseFloat(data.expenditure.toFixed(2)), // Make expenditure positive for chart
             profit: parseFloat((data.revenue - data.expenditure).toFixed(2)) // Difference
         }))
         .sort((d1, d2) => {

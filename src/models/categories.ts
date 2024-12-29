@@ -102,6 +102,8 @@ export const expenseCategories: Categories = {
       "Furniture (Wooden)": { name: "Furniture (Wooden)", emissionFactor: 0.8 },
       "Furniture (Metal)": { name: "Furniture (Metal)", emissionFactor: 1.5 },
       "Personal Care": { name: "Personal Care", emissionFactor: 0.7 },
+      "Gits": { name: "Gifts", emissionFactor: 0 },
+      "House Utils": { name: "House Utils", emissionFactor: 0.05 },
     },
   },
   "Entertainment and Recreation": {
@@ -146,6 +148,7 @@ export const expenseCategories: Categories = {
       "Hobbies": { name: "Hobbies", emissionFactor: 0.25 },
       "Others": { name: "Others", emissionFactor: 0.1 },
       "Internal": { name: "Internal", emissionFactor: 0 },
+      "Lawyer": { name: "Lawyer", emissionFactor: 0 },
     },
   },
   "Taxes/Fees": {
