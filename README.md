@@ -62,6 +62,6 @@
 
 ### **2.7. Hacer mejoras de UI**
 
-### **2.7. Internacinalización del texto**
+### **2.8. Internacinalización del texto**
 
 ---

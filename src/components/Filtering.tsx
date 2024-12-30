@@ -1,13 +1,13 @@
 import React, { JSX, useState } from 'react';
 import { useFilters } from '../context/FilterContext';
 import { Filters } from '../models/transaction';
-import { Categories, Category, categories } from '../models/categories';
+import { FlatCategory, categories } from '../models/categories';
 import "./filter.css";
 
 const Filtering: React.FC = () => {
   const { setFilters } = useFilters(); // Access the setFilters method from the context
 
-  const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [account, setAccount] = useState<string>('');
   const [startDate, setStartDate] = useState<Date>(new Date('2010-01-01'));
   const [endDate, setEndDate] = useState<Date>(new Date());
@@ -25,43 +25,39 @@ const Filtering: React.FC = () => {
     setFilters((prev: Filters) => ({ ...prev, ...newFilters }));
   };
 
-  // Generate nested options from categories
-  const toOptions = (categories: Categories, prefix: string = ""): JSX.Element[] => {
+  const countDepth = (catName: string): number => {
     const cats = categories || {};
-    return Object.keys(cats).flatMap((cat) => [
-      <option key={prefix + cat} value={cat}>
-        {prefix + cat}
-      </option>,
-      ...(cats[cat].subcategories ? toOptions(cats[cat].subcategories, `${prefix}— `) : []),
-    ]);
-  };
-
-  // Recursively find a category by name
-  const findByName = (name: string, categories: Categories): Category | null => {
-    const cats = categories || {};
-    for (const cat of Object.keys(cats)) {
-      if (cat === name) return cats[cat];
-      if (cats[cat].subcategories) {
-        const found = findByName(name, cats[cat].subcategories);
-        if (found) return found;
+    if (!cats[catName]) {
+      return 0;
+    } else {
+      if (cats[catName].parentId) {
+        return 1 +  countDepth(cats[catName].parentId);
+      } else {
+        return 0;
       }
     }
-    return null;
+  }
+
+  // Generate nested options from categories
+  const toOptions = (categories: Record<string,FlatCategory>): JSX.Element[] => {
+    const cats = categories || {};
+    return Object.keys(cats).flatMap((cat) => {
+      const prefix = "-".repeat(countDepth(cat));
+      return (<option key={cat} value={cat}>
+        {prefix + cats[cat].name}
+      </option>);
+    });
   };
 
   const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedName = e.target.value;
     if (selectedName === '') return;
-
-    const newCategory = findByName(selectedName, categories);
-    if (newCategory && !selectedCategories.includes(newCategory)) {
-      const updatedCategories = [...selectedCategories, newCategory];
-      setSelectedCategories(updatedCategories);
-      updateFilters({ categories: updatedCategories });
-    }
+    const updatedCategories = [...selectedCategories, selectedName];
+    setSelectedCategories(updatedCategories);
+    updateFilters({ categories: updatedCategories });
   };
 
-  const removeCategory = (category: Category) => {
+  const removeCategory = (category: string) => {
     const updatedCategories = selectedCategories.filter((cat) => cat !== category);
     setSelectedCategories(updatedCategories);
     updateFilters({ categories: updatedCategories });
@@ -78,12 +74,12 @@ const Filtering: React.FC = () => {
 
       <div className="selected-categories">
         {selectedCategories.map((category) => (
-          <span key={category.name} className="category-tag">
-            {category.name}
+          <span key={category} className="category-tag">
+            {categories[category].name}
             <button
               className="remove-category"
               onClick={() => removeCategory(category)}
-              title={`Remove ${category.name}`}
+              title={`Remove ${categories[category].name}`}
             >
               &times;
             </button>

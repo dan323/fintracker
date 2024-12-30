@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
-import { Transaction } from "../../models/transaction";
+import { Transaction } from "models/transaction";
 import Toggle from "../toggle-switch/Toggle";
 import "./pie-charts.css";
 import { getColorForTransaction } from "../../utils/color";
 import { Props } from "recharts/types/component/DefaultLegendContent";
-import { Categories, categories, Category } from "../../models/categories";
+import { findCategoryByName, isUnderCategory, parentCategory, subCategories } from "../../utils/categories";
 
 interface AnalyticsProps {
     transactions: Transaction[];
@@ -14,7 +14,6 @@ interface AnalyticsProps {
 const PieChartCategoryAccount: React.FC<AnalyticsProps> = ({ transactions }: AnalyticsProps) => {
     const [showByCategory, setShowByCategory] = useState(true);
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-    const [colors, setColors] = useState<Record<string, { r: number; g: number; b: number }>>({});
 
     // Custom legend renderer
     const renderCustomLegend = (props: Props) => {
@@ -44,82 +43,68 @@ const PieChartCategoryAccount: React.FC<AnalyticsProps> = ({ transactions }: Ana
         );
     };
 
-    const parentCategory = (cat: string, cats: Categories, parent: string | null): string | null => {
-        for (const category of Object.keys(cats)) {
-            if (category === cat) {
-                return parent ? parent : cat;
-            } else if (cats[category].subcategories) {
-                const found = parentCategory(cat, cats[category].subcategories, parent ? parent : category);
-                if (found) {
-                    return found;
-                }
-            }
-        }
-        return null;
-    };
-
-    const isUnderCategory = (cat: string, selected: string): boolean => {
-        if (cat === selected) {
-            return true;
-        } else {
-            const parent = parentCategory(selected, categories, null);
-            let parentCat: Category = categories[parent];
-            while (parentCat.name !== selected && parentCat.subcategories) {
-                const subCats = parentCat.subcategories;
-                parentCat = subCats[parentCategory(selected, subCats, null)];
-            }
-            return parentCategory(cat, parentCat.subcategories, null) !== null
-        }
-    }
-
     // Filter transactions based on the selected category
-    const filteredTransactions = selectedCategory
-        ? transactions.filter((tx) => isUnderCategory(tx.category, selectedCategory))
-        : transactions;
+    const filteredTransactions = useMemo(() => {
+        if (!selectedCategory) {
+            return transactions;
+        }
+        return transactions.filter((tx) => isUnderCategory(findCategoryByName(tx.category), findCategoryByName(selectedCategory)));
+    }, [transactions, selectedCategory]);
 
     // Aggregate data (separately for income and expenses)
-    const aggregatedData = filteredTransactions.reduce<{ [key: string]: { pos: number; neg: number } }>((acc, tx) => {
-        const key = showByCategory ? (selectedCategory
-            ? tx.category // Show subcategories if a category is selected
-            : parentCategory(tx.category, categories, null)) // Show main categories otherwise
-            : tx.account;
+    const aggregatedData = useMemo(() => {
+        return filteredTransactions.reduce<{ [key: string]: { pos: number; neg: number } }>((acc, tx) => {
+            const key = showByCategory
+                ? selectedCategory
+                    ? tx.category // Show subcategories if a category is selected
+                    : parentCategory(findCategoryByName(tx.category)).name // Show main categories otherwise
+                : tx.account;
 
-        if (!key) return acc;
+            if (!key) return acc;
 
-        if (!acc[key]) {
-            acc[key] = { pos: 0, neg: 0 };
-        }
-
-        if (tx.category !== 'Internal') {
-            if (tx.amount > 0) {
-                acc[key].pos += tx.amount; // Income
-            } else {
-                acc[key].neg -= tx.amount; // Expenses (convert to positive)
+            if (!acc[key]) {
+                acc[key] = { pos: 0, neg: 0 };
             }
-        }
 
-        return acc;
-    }, {});
+            if (tx.category !== "Internal") {
+                if (tx.amount > 0) {
+                    acc[key].pos += tx.amount; // Income
+                } else {
+                    acc[key].neg -= tx.amount; // Expenses (convert to positive)
+                }
+            }
 
-    const pieData = Object.entries(aggregatedData).map(([key, value]) => ({
-        name: key,
-        pos: parseFloat(value.pos.toFixed(2)),
-        neg: parseFloat(value.neg.toFixed(2)),
-    }));
+            return acc;
+        }, {});
+    }, [filteredTransactions, selectedCategory, showByCategory]);
 
-    // Handle slice clicks for drill-down
-    const handleSliceClick = (data: { name: string }) => {
-        const isParentCategory = Object.keys(categories).some((cat) => cat === data.name);
-        if (isParentCategory) {
-            setSelectedCategory(data.name);
+    const pieData = useMemo(() => {
+        return Object.entries(aggregatedData).map(([key, value]) => ({
+            name: key,
+            pos: parseFloat(value.pos.toFixed(2)),
+            neg: parseFloat(value.neg.toFixed(2)),
+        }));
+    }, [aggregatedData]);
+
+    const total = useMemo(() => {
+        return pieData.reduce(
+            (acc, data) => {
+                acc.pos += data.pos;
+                acc.neg += data.neg;
+                return acc;
+            },
+            { pos: 0, neg: 0 }
+        );
+    }, [pieData]);
+
+    // Handle slice click to drill down into subcategories
+    const handleSliceClick = (data: any) => {
+        if (selectedCategory) return; // Prevent further drill-down on subcategories
+        const clickedCategory = findCategoryByName(data.name);
+        if (clickedCategory && subCategories(clickedCategory).length > 0) {
+            setSelectedCategory(data.name); // Drill down into the clicked category
         }
     };
-
-    const total = pieData.reduce((acc,data) => {
-        acc.pos += data.pos;
-        acc.neg += data.neg;
-        return acc;
-    }, { pos: 0, neg: 0 });
 
     return (
         <div className="analytics-container">
@@ -150,7 +135,7 @@ const PieChartCategoryAccount: React.FC<AnalyticsProps> = ({ transactions }: Ana
                             cy="50%"
                             outerRadius={150}
                             fill="#8884d8"
-                            onClick={(data: {name: string}) => handleSliceClick(data)}
+                            onClick={(data: { name: string }) => handleSliceClick(data)}
                             labelLine={false}
                         >
                             {pieData.map((entry, index) => (
@@ -161,7 +146,7 @@ const PieChartCategoryAccount: React.FC<AnalyticsProps> = ({ transactions }: Ana
                             ))}
                         </Pie>
                         <Legend content={(props: Props) => renderCustomLegend(props)} />
-                        <Tooltip formatter={(value) => `${value}€: ${((value as number)*100/total.pos).toFixed(2)}%`} />
+                        <Tooltip formatter={(value) => `${value}€: ${((value as number) * 100 / total.pos).toFixed(2)}%`} />
                     </PieChart>
                 </div>
 
@@ -177,7 +162,7 @@ const PieChartCategoryAccount: React.FC<AnalyticsProps> = ({ transactions }: Ana
                             cy="50%"
                             outerRadius={150}
                             fill="#82ca9d"
-                            onClick={(data: {name: string}) => handleSliceClick(data)}
+                            onClick={(data: { name: string }) => handleSliceClick(data)}
                             labelLine={false}
                         >
                             {pieData.map((entry, index) => (
@@ -188,7 +173,7 @@ const PieChartCategoryAccount: React.FC<AnalyticsProps> = ({ transactions }: Ana
                             ))}
                         </Pie>
                         <Legend content={(props: Props) => renderCustomLegend(props)} />
-                        <Tooltip formatter={(value) => `${value}€: ${((value as number)*100/total.neg).toFixed(2)}%`} />
+                        <Tooltip formatter={(value) => `${value}€: ${((value as number) * 100 / total.neg).toFixed(2)}%`} />
                     </PieChart>
                 </div>
             </div>

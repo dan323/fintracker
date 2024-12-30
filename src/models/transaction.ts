@@ -1,5 +1,3 @@
-import { Category } from "./categories";
-
 export interface Transaction {
     id: string;
     date: Date; // Formato ISO (YYYY-MM-DD)
@@ -14,5 +12,5 @@ export interface Transaction {
 export interface Filters {
     dateRange?: { start: Date; end: Date };
     account?: string;
-    categories?: Category[];
+    categories?: string[];
 }

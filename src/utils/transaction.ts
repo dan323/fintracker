@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { Transaction } from "../models/transaction";
-import { Category } from "../models/categories";
+import { categories } from "../models/categories";
 import { saveTransactionsToFile, loadTransactionsFromFile, saveTransactionsFallback, msgpackTransformer, jsonTransformer } from "./message-pack";
 import { useFilters } from "../context/FilterContext";
 
@@ -99,7 +99,7 @@ export async function loadFile(): Promise<Transaction[]> {
  */
 const isCategoryMatch = (
     transactionCategory: string,
-    filterCategories: Category[]
+    filterCategories: string[]
 ): boolean => {
     // Iterate over the list of categories and check if the transactionCategory matches any category or its subcategories
     return filterCategories.some((filterCategory) =>
@@ -112,19 +112,20 @@ const isCategoryMatch = (
  */
 const matchCategory = (
     transactionCategory: string,
-    category: Category
+    category: string
 ): boolean => {
-    if (transactionCategory === category.name) {
+    if (transactionCategory === category) {
         return true;
     }
-
-    if (category.subcategories) {
-        return Object.keys(category.subcategories).some((sub) =>
-            matchCategory(transactionCategory, category.subcategories[sub])
-        );
+    if (!categories[transactionCategory]) {
+        return category === 'Others';
     }
 
-    return false;
+    if (categories[transactionCategory].parentId) {
+        return matchCategory(categories[transactionCategory].parentId, category);
+    } else {
+        return false;
+    }
 };
 
 export const useFilteredTransactions = (transactions: Transaction[]) => {

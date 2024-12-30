@@ -19,7 +19,7 @@ describe("When new transactions are added", () => {
 export const mockTransactions: Transaction[] = [
     {
       id: "1",
-      date: "2023-12-01",
+      date: new Date("2023-12-01"),
       description: "Supermercado",
       amount: -50.25,
       category: "Compras",
@@ -27,7 +27,7 @@ export const mockTransactions: Transaction[] = [
     },
     {
       id: "2",
-      date: "2023-12-02",
+      date: new Date("2023-12-02"),
       description: "Supermercado",
       amount: -10.25,
       category: "Compras",
@@ -35,7 +35,7 @@ export const mockTransactions: Transaction[] = [
     },
     {
       id: "3",
-      date: "2023-12-02",
+      date: new Date("2023-12-02"),
       description: "Supermercado",
       amount: -1.25,
       category: "Compras",
@@ -47,7 +47,7 @@ export const mockTransactions: Transaction[] = [
   export const mockNewTransactions: Transaction[] = [
     {
       id: "9",
-      date: "2023-12-01",
+      date: new Date("2023-12-01"),
       description: "Supermercado",
       amount: -50.05,
       category: "Compras",
@@ -55,7 +55,7 @@ export const mockTransactions: Transaction[] = [
     },
     {
       id: "10",
-      date: "2023-12-06",
+      date: new Date("2023-12-06"),
       description: "Supermercado",
       amount: -10.25,
       category: "Compras",
@@ -63,7 +63,7 @@ export const mockTransactions: Transaction[] = [
     },
     {
       id: "11",
-      date: "2023-12-06",
+      date: new Date("2023-12-06"),
       description: "Supermercado",
       amount: -1.25,
       category: "Compras",
@@ -74,7 +74,7 @@ export const mockTransactions: Transaction[] = [
   export const mockDuplicated: Transaction[] = [
     {
         id: "100",
-        date: "2023-12-01",
+        date: new Date("2023-12-01"),
         description: "Supermercado",
         amount: -50.25,
         category: "Compras",
@@ -82,7 +82,7 @@ export const mockTransactions: Transaction[] = [
       },
       {
         id: "200",
-        date: "2023-12-02",
+        date: new Date("2023-12-02"),
         description: "Supermercado",
         amount: -10.25,
         category: "Compras",
