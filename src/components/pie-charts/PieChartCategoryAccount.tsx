@@ -156,7 +156,7 @@ const PieChartCategoryAccount: React.FC<AnalyticsProps> = ({ transactions }: Ana
                             {pieData.map((entry, index) => (
                                 <Cell
                                     key={`cell-${index}`}
-                                    fill={getColorForTransaction(entry.name, true, colors, setColors)}
+                                    fill={getColorForTransaction(entry.name)}
                                 />
                             ))}
                         </Pie>
@@ -183,7 +183,7 @@ const PieChartCategoryAccount: React.FC<AnalyticsProps> = ({ transactions }: Ana
                             {pieData.map((entry, index) => (
                                 <Cell
                                     key={`cell-${index}`}
-                                    fill={getColorForTransaction(entry.name, false, colors, setColors)}
+                                    fill={getColorForTransaction(entry.name)}
                                 />
                             ))}
                         </Pie>
