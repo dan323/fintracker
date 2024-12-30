@@ -101,8 +101,6 @@ const TransactionChart: React.FC<Props> = ({ transactions }: Props) => {
         {}
     );
 
-    console.log("total",Object.values(monthlyData).reduce((a,val) => a + val.carbon, 0));
-
     const chartData: { month: string, carbon: number }[] = Object.values(monthlyData)
         .map((data: Data) => ({
             month: data.month,

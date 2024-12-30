@@ -13,7 +13,7 @@ const DuplicateResolver: React.FC<Props> = ({ duplicates, onResolve }) => {
             {duplicates.map((tx) => (
                 <div key={tx.id}>
                     <p>
-                        {tx.date} - {tx.description} - {tx.amount}
+                        {tx.date.toISOString()} - {tx.description} - {tx.amount}
                     </p>
                     <button onClick={() => onResolve(tx, "keep")}>Mantener</button>
                     <button onClick={() => onResolve(tx, "replace")}>Reemplazar</button>

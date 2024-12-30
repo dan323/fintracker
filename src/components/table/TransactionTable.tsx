@@ -47,7 +47,7 @@ const TransactionTable: React.FC<Props> = ({ transactions, onEdit, onDelete }) =
         <tbody>
           {sortedTransactions.map((tx: Transaction) =>
           (<tr key={tx.id}>
-            <td>{tx.date}</td>
+            <td>{`${tx.date.toISOString().slice(0, 10)}`}</td>
             <td>{tx.description}</td>
             <td>{tx.amount.toFixed(2)}</td>
             <td>{tx.category}</td>

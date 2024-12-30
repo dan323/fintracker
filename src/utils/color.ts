@@ -1,10 +1,10 @@
-interface Color {
+export interface Color {
     r: number,
     g: number,
     b: number,
 }
 
-const contrastColors: Color[] = [  
+export const contrastColors: Color[] = [  
     { r: 0, g: 0, b: 0 },        // Black
     { r: 34, g: 34, b: 34 },     // Dark Gray
     { r: 0, g: 51, b: 102 },     // Navy Blue

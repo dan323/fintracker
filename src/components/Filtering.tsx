@@ -27,20 +27,22 @@ const Filtering: React.FC = () => {
 
   // Generate nested options from categories
   const toOptions = (categories: Categories, prefix: string = ""): JSX.Element[] => {
-    return Object.keys(categories).flatMap((cat) => [
+    const cats = categories || {};
+    return Object.keys(cats).flatMap((cat) => [
       <option key={prefix + cat} value={cat}>
         {prefix + cat}
       </option>,
-      ...(categories[cat].subcategories ? toOptions(categories[cat].subcategories, `${prefix}— `) : []),
+      ...(cats[cat].subcategories ? toOptions(cats[cat].subcategories, `${prefix}— `) : []),
     ]);
   };
 
   // Recursively find a category by name
   const findByName = (name: string, categories: Categories): Category | null => {
-    for (const cat of Object.keys(categories)) {
-      if (cat === name) return categories[cat];
-      if (categories[cat].subcategories) {
-        const found = findByName(name, categories[cat].subcategories);
+    const cats = categories || {};
+    for (const cat of Object.keys(cats)) {
+      if (cat === name) return cats[cat];
+      if (cats[cat].subcategories) {
+        const found = findByName(name, cats[cat].subcategories);
         if (found) return found;
       }
     }

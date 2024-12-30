@@ -48,6 +48,7 @@ const App: React.FC = () => {
     );
 
     setTransactions((prev) => [...prev, ...nonDuplicates]);
+    saveTransactions();
   };
 
   const handleResolveDuplicate = (

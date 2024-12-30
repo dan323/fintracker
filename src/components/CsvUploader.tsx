@@ -14,6 +14,16 @@ interface PreTransaction {
     account?: string,
 }
 
+const toDate = (date: string): Date => {
+    if (date.match("\\d\\d\\d\\d-\\d\\d-\\d\\d")) {
+        return new Date(date);
+    }
+    const matching = date.match("(\\d\\d)/(\\d\\d)/(\\d\\d\\d\\d)");
+    if (matching) {
+        return new Date(`${matching[3]}-${matching[1]}-${matching[2]}`);
+    }
+}
+
 const CsvUploader: React.FC<Props> = ({ onUpload }) => {
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -24,7 +34,7 @@ const CsvUploader: React.FC<Props> = ({ onUpload }) => {
                 complete: (results: Papa.ParseResult<PreTransaction>) => {
                     const transactions: Transaction[] = results.data.map((row: PreTransaction) => ({
                         id: crypto.randomUUID(),
-                        date: row.date,
+                        date: toDate(row.date),
                         description: row.description || "",
                         amount: parseFloat(row.amount),
                         category: row.category || "Others",

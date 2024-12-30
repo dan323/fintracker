@@ -1,3 +1,5 @@
+import { contrastColors, Color } from "../utils/color";
+
 export interface Category {
   name: string;
   emissionFactor?: number; // kg CO₂ per $ spent
@@ -12,6 +14,7 @@ export interface Subcategory {
   emissionFactor?: number; // Optional, specific to this subcategory
   subcategories?: SubCategories; // Nested subcategories
   proportion?: number; // Proportion of spending, specific to nested breakdowns
+  color?: Color;
 }
 
 export const fromSubCategory: (sub: Subcategory) => Category = (sub) => {
@@ -29,14 +32,14 @@ export const expenseCategories: Categories = {
       "Groceries": {
         name: "Groceries",
         subcategories: {
-          "Meat Products": { name: "Meat Products", proportion: 0.3, emissionFactor: 1.5 },
-          "Seafood": { name: "Seafood", proportion: 0.2, emissionFactor: 1.3 },
-          "Vegan Options": { name: "Vegan Options", proportion: 0.1, emissionFactor: 0.5 },
-          "Other Groceries (Processed)": { name: "Other Groceries (Processed)", proportion: 0.4, emissionFactor: 1 },
+          "Meat Products": { name: "Meat Products", proportion: 0.3, emissionFactor: 1.5, color: contrastColors[0] },
+          "Seafood": { name: "Seafood", proportion: 0.2, emissionFactor: 1.3, color:contrastColors[1] },
+          "Vegan Options": { name: "Vegan Options", proportion: 0.1, emissionFactor: 0.5, color:contrastColors[2] },
+          "Other Groceries (Processed)": { name: "Other Groceries (Processed)", proportion: 0.4, emissionFactor: 1, color:contrastColors[3] },
         },
       },
-      "Dinning Out": { name: "Dining Out", emissionFactor: 1.3 },
-      "Delivery Services": { name: "Delivery Services", emissionFactor: 1.75 },
+      "Dinning Out": { name: "Dining Out", emissionFactor: 1.3, color: contrastColors[4] },
+      "Delivery Services": { name: "Delivery Services", emissionFactor: 1.75, color: contrastColors[5] },
     },
   },
   "Transport": {
@@ -46,20 +49,20 @@ export const expenseCategories: Categories = {
       "Private Vehicle Fuel": {
         name: "Private Vehicle Fuel",
         subcategories: {
-          "Gasoline": { name: "Gasoline", emissionFactor: 2.0 },
-          "Diesel": { name: "Diesel", emissionFactor: 2.3 },
-          "Electric": { name: "Electric", emissionFactor: 0.4 },
+          "Gasoline": { name: "Gasoline", emissionFactor: 2.0, color: contrastColors[6] },
+          "Diesel": { name: "Diesel", emissionFactor: 2.3, color: contrastColors[7] },
+          "Electric": { name: "Electric", emissionFactor: 0.4, color: contrastColors[8] },
         },
       },
       "Air Travel": {
         name: "Air Travel",
         subcategories: {
-          "Domestic Flights": { name: "Domestic Flights", emissionFactor: 0.25 },
-          "International Flights": { name: "International Flights", emissionFactor: 0.35 },
+          "Domestic Flights": { name: "Domestic Flights", emissionFactor: 0.25, color: contrastColors[9] },
+          "International Flights": { name: "International Flights", emissionFactor: 0.35, color: contrastColors[10] },
         },
       },
-      "Taxi": { name: "Taxi", emissionFactor: 0.25 },
-      "Rider Services": { name: "Rider Services", emissionFactor: 0.2 },
+      "Taxi": { name: "Taxi", emissionFactor: 0.25,  color: contrastColors[11]  },
+      "Rider Services": { name: "Rider Services", emissionFactor: 0.2,  color: contrastColors[12] },
     },
   },
   "Housing and Utilities": {
@@ -68,8 +71,8 @@ export const expenseCategories: Categories = {
       "Electricity": {
         name: "Electricity",
         subcategories: {
-          "Electricity (Renewable)": { name: "Electricity (Renewable)", emissionFactor: 0.2, proportion: 0.75 },
-          "Electricity (Coal-Based)": { name: "Electricity (Coal-Based)", emissionFactor: 0.6, proportion: 0.25 },
+          "Electricity (Renewable)": { name: "Electricity (Renewable)", emissionFactor: 0.2, proportion: 0.75, color: contrastColors[13] },
+          "Electricity (Coal-Based)": { name: "Electricity (Coal-Based)", emissionFactor: 0.6, proportion: 0.25, color: contrastColors[14] },
         },
       },
       "Water Usage": { name: "Water Usage", emissionFactor: 0.05 },

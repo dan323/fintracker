@@ -2,7 +2,7 @@ import { Category } from "./categories";
 
 export interface Transaction {
     id: string;
-    date: string; // Formato ISO (YYYY-MM-DD)
+    date: Date; // Formato ISO (YYYY-MM-DD)
     description: string;
     amount: number;
     category: string;
