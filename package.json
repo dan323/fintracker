@@ -34,7 +34,7 @@
     "clean:dist": "rimraf dist || rmdir /s /q dist",
     "predeploy": "npm run build",
     "deploy": "npx gh-pages -d dist",
-    "test": "node ./scripts/run-vitest.cjs",
+    "test": "vitest --run --globals --environment jsdom",
     "eject": "echo \"eject is not supported with vite\" && exit 1",
     "check:sec": "npm audit --audit-level=high",
     "upgrade:node22": "npx -y npm-check-updates -u && npm install"
