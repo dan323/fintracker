@@ -63,3 +63,52 @@
   border: 1px solid #ddd; /* Optional: border around content area */
   border-radius: 0 10px 10px 10px; /* Rounded bottom corners */
 }
+
+.error-message {
+  background-color: #fee;
+  border: 1px solid #fcc;
+  color: #c66;
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.error-message button {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: #c66;
+}
+
+.loading-spinner {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+}
+
+.error-fallback {
+  text-align: center;
+  padding: 40px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin: 20px;
+}
+
+.error-fallback button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 16px;
+}
+
+.action-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
