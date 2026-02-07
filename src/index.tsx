@@ -4,15 +4,18 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { FilterProvider } from './context/FilterContext';
+import { I18nProvider } from './i18n';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <FilterProvider>
-      <App />
-    </FilterProvider>,
+    <I18nProvider>
+      <FilterProvider>
+        <App />
+      </FilterProvider>
+    </I18nProvider>
   </React.StrictMode>
 );
 

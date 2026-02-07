@@ -3,8 +3,10 @@ import { useFilters } from '../context/FilterContext';
 import { Filters } from '../models/transaction';
 import { FlatCategory, categories } from '../models/categories';
 import "./filter.css";
+import { useTranslation } from '../i18n';
 
 const Filtering: React.FC = () => {
+  const { t } = useTranslation();
   const { setFilters } = useFilters(); // Access the setFilters method from the context
 
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
@@ -66,9 +68,9 @@ const Filtering: React.FC = () => {
   return (
     <div className="filter-bar">
       {/* Category Selector */}
-      <label htmlFor="category-select">Categorías:</label>
+      <label htmlFor="category-select">{t('filter.categories')}</label>
       <select id="category-select" value="" onChange={handleCategoryChange}>
-        <option value="">Seleccionar una categoría</option>
+        <option value="">{t('filter.selectCategory')}</option>
         {toOptions(categories)}
       </select>
 
@@ -88,11 +90,11 @@ const Filtering: React.FC = () => {
       </div>
 
       {/* Account Filter */}
-      <label htmlFor="account-input">Cuenta:</label>
+      <label htmlFor="account-input">{t('filter.account')}</label>
       <input
         id="account-input"
         type="text"
-        placeholder="Filtrar por cuenta"
+        placeholder={t('filter.account.placeholder')}
         value={account}
         onChange={(e) => {
           const newAccount = e.target.value;
@@ -103,7 +105,7 @@ const Filtering: React.FC = () => {
 
       {/* Date Range Filter */}
       <div className="date-range">
-        <label htmlFor="start-date">Inicio:</label>
+        <label htmlFor="start-date">{t('filter.start')}</label>
         <input
           id="start-date"
           type="date"
@@ -116,7 +118,7 @@ const Filtering: React.FC = () => {
           onKeyDown={(e) => e.preventDefault()} // Prevent manual typing
         />
 
-        <label htmlFor="end-date">Fin:</label>
+        <label htmlFor="end-date">{t('filter.end')}</label>
         <input
           id="end-date"
           type="date"

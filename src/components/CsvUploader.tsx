@@ -1,6 +1,7 @@
 import React from "react";
 import Papa from "papaparse";
 import { Transaction } from "../models/transaction";
+import { useTranslation } from "../i18n";
 
 const parseDate = (dateString: string): Date => {
 
@@ -44,7 +45,8 @@ interface PreTransaction {
 }
 
 const CsvUploader: React.FC<Props> = ({ onUpload, disabled = false }) => {
-    
+    const { t } = useTranslation();
+
     const normalizeTransaction = (rawTransaction: any): Transaction => {
     return {
       ...rawTransaction,
@@ -69,8 +71,8 @@ const CsvUploader: React.FC<Props> = ({ onUpload, disabled = false }) => {
                         date: row.date,
                         description: row.description || "",
                         amount: row.amount,
-                        category: row.category || "Others",
-                        account: row.account || "Desconocida",
+                        category: row.category || t('filter.selectCategory'),
+                        account: row.account || t('filter.account.placeholder'),
                     }));
                     onUpload(transactions.map(normalizeTransaction));
                 },

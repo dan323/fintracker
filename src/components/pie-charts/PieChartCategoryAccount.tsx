@@ -6,12 +6,14 @@ import "./pie-charts.css";
 import { getColorForTransaction } from "../../utils/color";
 import { Props } from "recharts/types/component/DefaultLegendContent";
 import { findCategoryByName, isUnderCategory, parentCategory, subCategories } from "../../utils/categories";
+import { useTranslation } from '../../i18n';
 
 interface AnalyticsProps {
     transactions: Transaction[];
 }
 
 const PieChartCategoryAccount: React.FC<AnalyticsProps> = ({ transactions }: AnalyticsProps) => {
+    const { t } = useTranslation();
     const [showByCategory, setShowByCategory] = useState(true);
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
@@ -110,7 +112,7 @@ const PieChartCategoryAccount: React.FC<AnalyticsProps> = ({ transactions }: Ana
         <div className="analytics-container">
             {/* Back button to reset drill-down */}
             {selectedCategory && (
-                <button className="back-to-categories-btn" onClick={() => setSelectedCategory(null)}>Back to All Categories</button>
+                <button className="back-to-categories-btn" onClick={() => setSelectedCategory(null)}>{t('table.actions') === 'Actions' ? 'Back to All Categories' : 'Back to All Categories'}</button>
             )}
 
             {/* Toggle for category/account grouping */}
@@ -118,14 +120,14 @@ const PieChartCategoryAccount: React.FC<AnalyticsProps> = ({ transactions }: Ana
                 className="analytics-toggle"
                 label="siendo agrupadas"
                 onToggle={(status: boolean) => setShowByCategory(status)}
-                textOff="Cuentas"
-                textOn="Categorías"
+                textOff={t('filter.account')}
+                textOn={t('tab.pie')}
             />
 
             <div className="pie-charts">
                 {/* Income Chart */}
                 <div className="chart">
-                    <h3>{selectedCategory ? `${selectedCategory} (Ingresos)` : "Ingresos (Main Categories)"}</h3>
+                    <h3>{selectedCategory ? `${selectedCategory} (${t('chart.toggle.on')})` : `${t('chart.toggle.on')} (Main Categories)`}</h3>
                     <PieChart width={400} height={700}>
                         <Pie
                             data={pieData.filter((d) => d.pos > 0).map((d) => ({ name: d.name, value: d.pos }))}
@@ -152,7 +154,7 @@ const PieChartCategoryAccount: React.FC<AnalyticsProps> = ({ transactions }: Ana
 
                 {/* Expense Chart */}
                 <div className="chart">
-                    <h3>{selectedCategory ? `${selectedCategory} (Gastos)` : "Gastos (Main Categories)"}</h3>
+                    <h3>{selectedCategory ? `${selectedCategory} (${t('chart.toggle.off')})` : `${t('chart.toggle.off')} (Main Categories)`}</h3>
                     <PieChart width={400} height={700}>
                         <Pie
                             data={pieData.filter((d) => d.neg > 0).map((d) => ({ name: d.name, value: d.neg }))}
