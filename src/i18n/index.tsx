@@ -4,8 +4,8 @@ export type Locale = 'es' | 'en';
 
 export type Translations = Record<string, string>;
 
-const es: Translations = require('./locales/es.json');
-const en: Translations = require('./locales/en.json');
+import es from './locales/es.json';
+import en from './locales/en.json';
 
 const resources: Record<Locale, Translations> = {
   es,
@@ -40,4 +40,3 @@ export const useTranslation = () => {
   if (!ctx) throw new Error('useTranslation must be used within I18nProvider');
   return { t: ctx.t, locale: ctx.locale, setLocale: ctx.setLocale };
 };
-

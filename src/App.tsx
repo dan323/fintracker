@@ -14,6 +14,7 @@ import "./App.css";
 import TabSelector from "./components/TabSelector";
 import { BrowserRouter } from "react-router-dom";
 import { useTranslation } from "./i18n";
+import LanguageSwitcher from "./components/LanguageSwitcher";
 
 const App: React.FC = () => {
   const { t } = useTranslation();
@@ -83,7 +84,7 @@ const App: React.FC = () => {
 
   return (
     <ErrorBoundary>
-    <BrowserRouter basename="/fintracker">
+    <BrowserRouter basename={import.meta.env.BASE_URL || '/'}>
       <div className="app-container">
         <h1 className="app-title">{t('app.title')}</h1>
         {error && (
@@ -100,6 +101,7 @@ const App: React.FC = () => {
             {isLoading ? t('loading.thinking') : t('action.save')}
           </button>
           <CsvUploader onUpload={handleUpload} disabled={isLoading} />
+          <LanguageSwitcher />
         </div>
           {isLoading && <div className="loading-spinner">{t('loading')}</div>}
         <Filtering />

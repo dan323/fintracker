@@ -122,6 +122,51 @@ amount,date,description,category,account
 
 - Esta aplicación guarda datos del usuario localmente (archivos JSON / messagepack). Si trabajas con datos reales, considera encriptarlos antes de persistirlos.
 
+## Internacionalización (i18n) — Cambiar el idioma
+
+La aplicación incluye un proveedor simple de traducciones (`src/i18n`) con ficheros de locales en `src/i18n/locales/` (por ejemplo `es.json` y `en.json`). Por defecto la aplicación usa el idioma español (`'es'`). A continuación se explica cómo cambiar el idioma y dónde encontrar el selector.
+
+1) Selector de idioma incluido (ya disponible en la UI)
+
+La aplicación ya incorpora un selector de idioma listo para usar: `src/components/LanguageSwitcher.tsx`. El selector aparece por defecto en la barra de controles de la aplicación (dentro de la clase `.app-controls` en `src/App.tsx`). No es necesario añadirlo manualmente; simplemente arranca la app y el selector será visible.
+
+2) Cambiar el idioma programáticamente
+
+En cualquier componente envuelto por el `I18nProvider` puedes usar el hook `useTranslation()` para cambiar el idioma desde código:
+
+```tsx
+import { useTranslation } from './i18n';
+
+const { setLocale } = useTranslation();
+// Cambiar a inglés
+setLocale('en');
+```
+
+3) Cambiar el idioma por defecto (edición del código)
+
+Si quieres que la aplicación arranque en inglés por defecto, edita el valor inicial en `src/i18n/index.tsx` (línea con `useState<Locale>('es')`) y pon `'en'`:
+
+```diff
+- const [locale, setLocale] = useState<Locale>('es');
++ const [locale, setLocale] = useState<Locale>('en');
+```
+
+4) Archivos de traducción
+
+Los archivos de traducción están en `src/i18n/locales/`. Añade nuevas claves o idiomas creando un nuevo fichero JSON con la misma estructura. El proveedor usa la clave solicitada y hace fallback a `es` y `en` si falta la traducción.
+
+5) Probar localmente
+
+- Ejecuta la app en desarrollo:
+
+```powershell
+npm start
+```
+
+- Abre `http://localhost:3000` y usa el selector de idioma en la barra de controles para cambiar idioma en tiempo real.
+
+---
+
 ## Enlaces
 
 - Página GitHub Pages (si está configurada): `https://dan323.github.io/fintracker`
