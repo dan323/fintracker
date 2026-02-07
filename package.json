@@ -6,7 +6,6 @@
   "dependencies": {
     "@msgpack/msgpack": "^3.0.0-beta2",
     "browser-fs-access": "^0.38.0",
-    "cra-template-typescript": "1.2.0",
     "papaparse": "^5.5.3",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
