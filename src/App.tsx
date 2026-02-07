@@ -13,8 +13,10 @@ import { loadFile, saveFile, useFilteredTransactions } from "./utils/transaction
 import "./App.css";
 import TabSelector from "./components/TabSelector";
 import { BrowserRouter } from "react-router-dom";
+import { useTranslation } from "./i18n";
 
 const App: React.FC = () => {
+  const { t } = useTranslation();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [duplicates, setDuplicates] = useState<Transaction[]>([]);
   const [activeTab, setActiveTab] = useState<string>("table");
@@ -32,7 +34,7 @@ const App: React.FC = () => {
       await loadFile().then(setTransactions);
     } catch (error) {
       console.log("No file selected or error loading file:", error);
-      setError("Error al cargar el archivo");
+      setError(t('error.load'));
     } finally {
       setIsLoading(false);
     }
@@ -46,7 +48,7 @@ const App: React.FC = () => {
       await saveFile(transactions);
     } catch (error) {
       console.log("Error saving file:", error);
-      setError("Error al guardar el archivo");
+      setError(t('error.save'));
     } finally {
       setIsLoading(false);
     }
@@ -83,7 +85,7 @@ const App: React.FC = () => {
     <ErrorBoundary>
     <BrowserRouter basename="/fintracker">
       <div className="app-container">
-        <h1 className="app-title">Finanzas personales</h1>
+        <h1 className="app-title">{t('app.title')}</h1>
         {error && (
             <div className="error-message">
               {error}
@@ -92,14 +94,14 @@ const App: React.FC = () => {
           )}
         <div className="app-controls">
           <button className="action-button" onClick={loadTransactions}>
-            {isLoading ? "Pensando..." : "Subir movimientos"}
+            {isLoading ? t('loading.thinking') : t('action.upload')}
           </button>
           <button className="action-button" onClick={saveTransactions}>
-            {isLoading ? "Pensando..." : "Guardar movimientos"}
+            {isLoading ? t('loading.thinking') : t('action.save')}
           </button>
           <CsvUploader onUpload={handleUpload} disabled={isLoading} />
         </div>
-          {isLoading && <div className="loading-spinner">Cargando...</div>}
+          {isLoading && <div className="loading-spinner">{t('loading')}</div>}
         <Filtering />
         <TabSelector activeTab={activeTab} setActiveTab={setActiveTab} />
         <div className="tab-content">

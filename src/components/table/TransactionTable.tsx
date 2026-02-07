@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "./transaction-table.css";
 import { Transaction } from "../../models/transaction";
 import ToggleMultiple from "../toggle-switch/ToggleMultiple";
+import { useTranslation } from '../../i18n';
 
 interface Props {
   transactions: Transaction[];
@@ -10,6 +11,7 @@ interface Props {
 }
 
 const TransactionTable: React.FC<Props> = ({ transactions, onEdit, onDelete }) => {
+  const { t } = useTranslation();
   const [type, setType] = useState<"" | "positive" | "negative">("");
 
   const sortedTransactions = transactions.filter((tx) => {
@@ -23,9 +25,9 @@ const TransactionTable: React.FC<Props> = ({ transactions, onEdit, onDelete }) =
   }).sort((t1, t2) => new Date(t1.date).getTime() - new Date(t2.date).getTime());
 
   const map: Map<string,string> = new Map();
-  map.set('', 'Ingresos y Gastos');
-  map.set('positive', 'Ingresos');
-  map.set('negative', 'Gastos');
+  map.set('', t('chart.toggle.show'));
+  map.set('positive', t('chart.toggle.on'));
+  map.set('negative', t('chart.toggle.off'));
 
   return (
     <div>
@@ -36,12 +38,12 @@ const TransactionTable: React.FC<Props> = ({ transactions, onEdit, onDelete }) =
       <table className="transaction-table">
         <thead>
           <tr key="header-row">
-            <th>Fecha</th>
-            <th>Descripción</th>
-            <th>Monto</th>
-            <th>Categoría</th>
-            <th>Cuenta</th>
-            <th>Acciones</th>
+            <th>{t('table.date')}</th>
+            <th>{t('table.description')}</th>
+            <th>{t('table.amount')}</th>
+            <th>{t('table.category')}</th>
+            <th>{t('table.account')}</th>
+            <th>{t('table.actions')}</th>
           </tr>
         </thead>
         <tbody>
@@ -54,10 +56,10 @@ const TransactionTable: React.FC<Props> = ({ transactions, onEdit, onDelete }) =
             <td>{tx.account}</td>
             <td>
               <button className="edit-btn" onClick={() => onEdit(tx)}>
-                Editar
+                {t('table.edit')}
               </button>
               <button className="delete-btn" onClick={() => onDelete(tx.id)}>
-                Eliminar
+                {t('table.delete')}
               </button>
             </td>
           </tr>

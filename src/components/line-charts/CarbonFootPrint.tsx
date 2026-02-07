@@ -15,12 +15,14 @@ import {
 import './carbon-footprint.css'
 import { Transaction } from "../../models/transaction";
 import { CarbonCalculator } from "../../utils/carbon-calculator";
+import { useTranslation } from '../../i18n';
 
 interface Props {
     transactions: Transaction[];
 }
 
 const CarbonFootPrint: React.FC<Props> = ({ transactions }) => {
+    const { t } = useTranslation();
     const [view, setView] = useState<'timeline' | 'breakdown'>('timeline');
     
     const analysis = useMemo(() => {
@@ -62,15 +64,15 @@ const CarbonFootPrint: React.FC<Props> = ({ transactions }) => {
             {/* Stats Cards */}
             <div className="carbon-stats">
                 <div className="stat-card">
-                    <h3>Total CO₂e</h3>
+                    <h3>{t('carbon.total')}</h3>
                     <p>{analysis.totalEmissions.toFixed(2)} kg</p>
                 </div>
                 <div className="stat-card">
-                    <h3>Promedio Mensual</h3>
+                    <h3>{t('carbon.monthly')}</h3>
                     <p>{analysis.monthlyAverage.toFixed(2)} kg</p>
                 </div>
                 <div className="stat-card">
-                    <h3>Categoría Principal</h3>
+                    <h3>{t('carbon.topCategory')}</h3>
                     <p>{analysis.breakdown[0]?.category || 'N/A'}</p>
                 </div>
             </div>
@@ -81,28 +83,28 @@ const CarbonFootPrint: React.FC<Props> = ({ transactions }) => {
                     className={view === 'timeline' ? 'active' : ''} 
                     onClick={() => setView('timeline')}
                 >
-                    Línea de Tiempo
+                    {t('carbon.timeline')}
                 </button>
                 <button 
                     className={view === 'breakdown' ? 'active' : ''} 
                     onClick={() => setView('breakdown')}
                 >
-                    Por Categorías
+                    {t('carbon.byCategory')}
                 </button>
             </div>
 
             {/* Charts */}
             {view === 'timeline' ? (
                 <div className="chart-container">
-                    <h2>Emisiones Mensuales de CO₂e</h2>
+                    <h2>{t('carbon.monthlyEmissions')}</h2>
                     <ResponsiveContainer width="100%" height={400}>
                         <LineChart data={monthlyData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis dataKey="month" tick={{ fontSize: 12 }} />
                             <YAxis tickFormatter={(value: number) => `${value} kg`} width={80} />
                             <Tooltip 
-                                formatter={(value: number) => [`${value.toFixed(2)} kg CO₂e`, 'Emisiones']}
-                                labelFormatter={(label) => `Mes: ${label}`}
+                                formatter={(value: number) => [`${value.toFixed(2)} kg CO₂e`, t('carbon.total')]}
+                                labelFormatter={(label) => `${t('filter.start')} ${label}`}
                             />
                             <Legend />
                             <Line 
@@ -110,7 +112,7 @@ const CarbonFootPrint: React.FC<Props> = ({ transactions }) => {
                                 type="monotone" 
                                 stroke="#e74c3c" 
                                 strokeWidth={3}
-                                name="Emisiones CO₂e"
+                                name={t('carbon.total')}
                                 dot={{ fill: '#e74c3c', strokeWidth: 2, r: 4 }}
                                 activeDot={{ r: 6 }}
                             />
@@ -119,7 +121,7 @@ const CarbonFootPrint: React.FC<Props> = ({ transactions }) => {
                 </div>
             ) : (
                 <div className="chart-container">
-                    <h2>Emisiones por Categoría</h2>
+                    <h2>{t('carbon.byCategoryTitle')}</h2>
                     <ResponsiveContainer width="100%" height={400}>
                         <PieChart>
                             <Pie
@@ -144,7 +146,7 @@ const CarbonFootPrint: React.FC<Props> = ({ transactions }) => {
 
             {/* Recommendations */}
             <div className="recommendations">
-                <h3>🌱 Recomendaciones para Reducir tu Huella de Carbono</h3>
+                <h3>{t('carbon.recommendations')}</h3>
                 <ul>
                     {analysis.recommendations.map((rec, index) => (
                         <li key={index}>{rec}</li>
@@ -156,3 +158,4 @@ const CarbonFootPrint: React.FC<Props> = ({ transactions }) => {
 };
 
 export default CarbonFootPrint;
+
