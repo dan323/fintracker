@@ -16,6 +16,19 @@ const normalizeKeys = (obj: any): any => {
     return obj;
 };
 
+// Add this new function to ensure dates are properly converted
+const normalizeTransaction = (tx: any): Transaction => {
+    return {
+        ...tx,
+        date: typeof tx.date === 'string' ? new Date(tx.date) : tx.date,
+        amount: typeof tx.amount === 'string' ? parseFloat(tx.amount) : tx.amount,
+    };
+};
+
+const normalizeTransactions = (transactions: any[]): Transaction[] => {
+    return transactions.map(normalizeTransaction);
+};
+
 export async function saveFile(transactions: any[]) {
     if ("showSaveFilePicker" in window) {
         try {
@@ -33,6 +46,7 @@ export async function saveFile(transactions: any[]) {
             saveTransactionsToFile(transactions, fileHandle);
         } catch (err) {
             console.error("Error saving file:", err);
+            throw err; // Re-throw for proper error handling
         }
     } else {
         // Fallback to Blob-based download
@@ -41,56 +55,66 @@ export async function saveFile(transactions: any[]) {
 }
 
 export async function loadFile(): Promise<Transaction[]> {
-    if ((window as any).showOpenFilePicker) {
-        const [fileHandle]: FileSystemFileHandle[] = await (window as any).showOpenFilePicker({
-            types: [
-                {
-                    description: "MessagePack File",
-                    accept: { "application/octet-stream": [".msgpack"] },
-                },
-                {
-                    description: "JSON File",
-                    accept: { "application/json": [".json"] },
-                },
-            ],
-        });
+    try {
+        if ((window as any).showOpenFilePicker) {
+            const [fileHandle]: FileSystemFileHandle[] = await (window as any).showOpenFilePicker({
+                types: [
+                    {
+                        description: "MessagePack File",
+                        accept: { "application/octet-stream": [".msgpack"] },
+                    },
+                    {
+                        description: "JSON File",
+                        accept: { "application/json": [".json"] },
+                    },
+                ],
+            });
 
-        let transformer: (file: File) => Promise<Transaction[]>;
-        if ((await fileHandle.getFile()).name.includes(".msgpack")) {
-            transformer = msgpackTransformer;
+            let transformer: (file: File) => Promise<Transaction[]>;
+            const file = await fileHandle.getFile();
+            if (file.name.includes(".msgpack")) {
+                transformer = msgpackTransformer;
+            } else {
+                transformer = jsonTransformer;
+            }
+            
+            const rawTransactions = await loadTransactionsFromFile(fileHandle, transformer);
+            const normalizedTransactions = normalizeKeys(rawTransactions);
+            return normalizeTransactions(normalizedTransactions);
         } else {
-            transformer = jsonTransformer;
-        }
-        return normalizeKeys(await loadTransactionsFromFile(fileHandle, transformer)) as Transaction[];
-    } else {
-        alert('Your browser does not support advanced file selection. Using fallback.');
-        return new Promise((resolve, reject) => {
-            const input = document.createElement("input");
-            input.type = "file";
-            input.accept = ".msgpack,.json"; // Supported file types
+            alert('Your browser does not support advanced file selection. Using fallback.');
+            return new Promise((resolve, reject) => {
+                const input = document.createElement("input");
+                input.type = "file";
+                input.accept = ".msgpack,.json"; // Supported file types
 
-            input.onchange = async () => {
-                if (input.files && input.files[0]) {
-                    try {
-                        const file = input.files[0];
-                        let transformer: (file: File) => Promise<Transaction[]>;
-                        if (file.name.endsWith(".msgpack")) {
-                            transformer = msgpackTransformer;
-                        } else {
-                            transformer = jsonTransformer;
+                input.onchange = async () => {
+                    if (input.files && input.files[0]) {
+                        try {
+                            const file = input.files[0];
+                            let transformer: (file: File) => Promise<Transaction[]>;
+                            if (file.name.endsWith(".msgpack")) {
+                                transformer = msgpackTransformer;
+                            } else {
+                                transformer = jsonTransformer;
+                            }
+                            const transactions = await transformer(file);
+                            const normalizedTransactions = normalizeKeys(transactions);
+                            resolve(normalizeTransactions(normalizedTransactions));
+                        } catch (error) {
+                            reject(error);
                         }
-                        const transactions = await transformer(file);
-                        resolve(normalizeKeys(transactions) as Transaction[]);
-                    } catch (error) {
-                        reject(error);
+                    } else {
+                        reject(new Error("No file selected."));
                     }
-                } else {
-                    reject(new Error("No file selected."));
-                }
-            };
+                };
 
-            input.click(); // Trigger file picker dialog
-        });
+                input.click(); // Trigger file picker dialog
+            });
+        }
+    } catch (error) {
+        console.error("Error loading file:", error);
+        throw error; // Re-throw for proper error handling
     }
 }
 
@@ -137,6 +161,12 @@ export const useFilteredTransactions = (transactions: Transaction[]) => {
         }
 
         return transactions.filter((transaction) => {
+            // Ensure transaction has a valid date before filtering
+            if (!transaction.date || !(transaction.date instanceof Date)) {
+                console.warn("Transaction has invalid date:", transaction);
+                return false;
+            }
+
             // Filter by date range
             if (filters.dateRange) {
                 const transactionDate = new Date(transaction.date);

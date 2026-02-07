@@ -1,67 +1,127 @@
-## Plan para Aplicación Client-Side de Finanzas Personales
+# FinTracker
 
-### **Tecnologías Base**
+FinTracker es una aplicación cliente (React + TypeScript) para gestionar finanzas personales: importar transacciones desde CSV, detectar duplicados, filtrar y visualizar gastos, y calcular una estimación de la huella de carbono asociada a los movimientos.
 
-- **UI**: React con TypeScript.
-- **Gestor de Estado**: React Context API o React Reducer (sin librerías adicionales).
-- **Parsers**: PapaParse para leer archivos CSV.
-- **Formato de Almacenamiento Local**: Archivos JSON para persistencia en el sistema de archivos del usuario.
+## Estado del repositorio
 
----
+El contenido original del plan y roadmap se ha movido a `WIP.md` para mantener este `README.md` limpio y enfocado en instalar y ejecutar el proyecto.
 
-## **1. Arquitectura del Proyecto**
+## Rápido: instalar y ejecutar (desarrollo)
 
-### **Estructura del Proyecto**
+Requisitos:
+- Node.js 22+ (recomendado)
+- npm (incluido con Node.js)
 
-1. **src/models**:
-   - Definir interfaces y tipos.
-2. **src/components**:
-   - Componentes React modulares.
-3. **src/context**:
-4. **src/utils**:
+Sugerencia: usa `nvm` o `nvm-windows` para gestionar versiones de Node y asegura reproducibilidad usando el fichero `.nvmrc` que contiene la versión 22.
 
----
+Instalar dependencias:
 
-## **2. Funcionalidades Principales**
+```powershell
+npm install
+```
 
-### **2.1. Gestor de Transacciones**
+Ejecutar en modo desarrollo (abre http://localhost:3000):
 
-- Tabla para visualizar transacciones.✅
-- Detección y resolución de duplicados.✅
-- Soporte para categorías personalizables (opcional).
-- Editar transacciones.
-- Borrar transacciones.✅
+```powershell
+npm start
+```
 
-### **2.2. Sistema de Plug-ins**
+Construir para producción:
 
-- Create a small backend for security porpuses.
-- Integrate Plaid.
+```powershell
+npm run build
+```
 
-### **2.3. Gestor de Archivos Locales**
+Ejecutar tests (si los hay):
 
-- Guardar datos en el sistema de archivos local como JSON u otros.✅
-- Monitorear cambios en el archivo JSON para actualizar la UI (opcional).
+```powershell
+npm test
+```
 
-### **2.4. Subida Manual de CSV y Resolución de Duplicados**
+## Estructura relevante del proyecto
 
-- Parsear archivos CSV.✅ (Not tested)
-- Detectar duplicados comparando atributos clave: **fecha**, **monto**, **cuenta**.✅ (Not tested)
-- Proporcionar opciones para manejar duplicados: mantener, reemplazar o ignorar.✅ (Not tested)
+- `src/` - código fuente React + TypeScript
+  - `components/` - componentes UI reutilizables
+  - `context/` - React Context y providers
+  - `models/` - tipos e interfaces del dominio (Transactions, Categories)
+  - `utils/` - utilidades (parsings, deduplicación, messagepack)
+- `public/` - archivos estáticos (index.html, manifest, favicon)
+- `data/transactions.msgpack` - ejemplo de datos serializados (puede usarse como fixture)
 
-### **2.5. Calcular la huella de carbono**
+## Formatos aceptados (CSV / JSON / MessagePack)
 
-- Computar la huella de carbono en función de los gastos.✅
-- Computar la huella de carbono en función del área geográfica
+La aplicación soporta importar transacciones en los formatos más comunes. A continuación se indican las expectativas y ejemplos para cada formato (basado en el código de `src/components/CsvUploader.tsx`, `src/models/transaction.ts` y `src/utils/message-pack.ts`).
 
-### **2.6. Filtrar por categorías, rango de fechas, fuente del movimiento**
+1) CSV
+- El uploader CSV acepta archivos con extensión `.csv`.
+- Se espera una fila de cabecera con nombres de columnas (case-sensitive recomendada):
+  - `amount` (obligatorio) — número (ej.: `-12.50` para gasto, `1000` para ingreso).
+  - `date` (obligatorio) — fecha en formato ISO (`YYYY-MM-DD`) o otros formatos parseables (el parser intenta Date.parse y también `MM/DD/YYYY`). Si no puede parsear, se usa la fecha actual como fallback y se emite una advertencia.
+  - `description` (opcional) — texto descriptivo.
+  - `category` (opcional) — texto; si falta, se asigna `Others`.
+  - `account` (opcional) — texto; si falta, se asigna `Desconocida`.
 
-- Filtrar por grupo de categorías.✅
-- Cuando se filtra por todas las subcategorías de una categoría, añadirla al filtrar y borrar las subcategorías (opcional).
-- Filtrar por rango de fechas.✅
-- Filtrar por fuente del movimiento.✅
+- Ejemplo mínimo (archivo `transactions.csv`):
 
-### **2.7. Hacer mejoras de UI**
+```csv
+amount,date,description,category,account
+-12.50,2025-12-01,Café,Cafetería,Cuenta Corriente
+1000,12/15/2025,Salario,Ingresos,Cuenta Nomina
+```
 
-### **2.8. Internacinalización del texto**
+- Notas:
+  - Los separadores decimales deben usar `.` (puntos) como en `12.50`.
+  - Las filas vacías se saltan.
+  - Si el CSV no incluye `id`, la aplicación genera `id` automáticamente al importar.
 
----
+2) JSON
+- Se espera un array de objetos con la forma de `Transaction`:
+  - `id` (string) — opcional; si falta, se puede generar.
+  - `date` — preferiblemente una cadena ISO (`"2025-12-01"`) o un timestamp; el transformer intentará convertirlo a `Date`.
+  - `description` (string)
+  - `amount` (number)
+  - `category` (string)
+  - `account` (string)
+
+- Ejemplo mínimo (`transactions.json`):
+
+```json
+[
+  {
+    "id": "abc-123",
+    "date": "2025-12-01",
+    "description": "Café",
+    "amount": -12.5,
+    "category": "Cafetería",
+    "account": "Cuenta Corriente"
+  }
+]
+```
+
+- El helper `jsonTransformer` en `src/utils/message-pack.ts` parsea esto y lo convierte en `Transaction[]`.
+
+3) MessagePack (`.msgpack`)
+- MessagePack es un formato binario compacto; la app incluye utilidades para serializar y deserializar con `@msgpack/msgpack`.
+- El archivo suele tener extensión `.msgpack` y contiene la misma estructura (array de transacciones) serializada en binary.
+- El helper `msgpackTransformer` en `src/utils/message-pack.ts` decodifica el buffer en `Transaction[]`. El guardado por defecto utiliza el nombre `transactions.msgpack`.
+- Nota: dado que MessagePack es binario, no es legible en un editor de texto; usa las utilidades de la aplicación o la librería `@msgpack/msgpack` para crear/leer estos ficheros.
+
+## Scripts útiles
+
+- `npm start` - ejecuta la app en desarrollo
+- `npm run build` - empaqueta la app para producción
+- `npm test` - ejecuta la suite de tests
+
+## Desarrollo y contribución
+
+- Mantén PRs pequeños y enfocados.
+- Ejecuta tests y lint antes de abrir PRs (añade scripts si no existen).
+- Si introduces dependencias nuevas, añade una nota en el README o CHANGELOG.
+
+## Notas de seguridad y privacidad
+
+- Esta aplicación guarda datos del usuario localmente (archivos JSON / messagepack). Si trabajas con datos reales, considera encriptarlos antes de persistirlos.
+
+## Enlaces
+
+- Página GitHub Pages (si está configurada): `https://dan323.github.io/fintracker`

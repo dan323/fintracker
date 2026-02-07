@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo, useState } from "react";
 import {
     LineChart,
     Line,
@@ -6,115 +6,153 @@ import {
     YAxis,
     Tooltip,
     ResponsiveContainer,
+    CartesianGrid,
+    Legend,
+    PieChart,
+    Pie,
+    Cell
 } from "recharts";
-import './transaction-chart.css'
+import './carbon-footprint.css'
 import { Transaction } from "../../models/transaction";
-import { findCategoryByName, subCategories } from "../../utils/categories";
-import { categories, FlatCategory } from "../../models/categories";
+import { CarbonCalculator } from "../../utils/carbon-calculator";
 
 interface Props {
     transactions: Transaction[];
 }
 
-interface Data { month: string; carbon: number; }
+const CarbonFootPrint: React.FC<Props> = ({ transactions }) => {
+    const [view, setView] = useState<'timeline' | 'breakdown'>('timeline');
+    
+    const analysis = useMemo(() => {
+        return CarbonCalculator.analyzeFootprint(transactions);
+    }, [transactions]);
 
-// Map of Spanish month names to their numeric indices (0 for January, 11 for December)
-const monthMap: { [key: string]: number } = {
-    ene: 0,
-    feb: 1,
-    mar: 2,
-    abr: 3,
-    may: 4,
-    jun: 5,
-    jul: 6,
-    ago: 7,
-    sept: 8,
-    oct: 9,
-    nov: 10,
-    dic: 11,
-};
-
-const TransactionChart: React.FC<Props> = ({ transactions }: Props) => {
-
-    const emissionsBySubcategories = (category: FlatCategory, ammount: number) => {
-        const subCats = subCategories(category);
-        return subCats.reduce((totalEmission, sub) => {
-            const subProportion = sub.proportion || 0; // Default to 0 if no proportion is specified
-            if (sub.emissionFactor) {
-                const subEmissionFactor = sub.emissionFactor || 0; // Default to 0 if no emission factor
-                return totalEmission + ammount * subProportion * subEmissionFactor;
-            } else {
-                return totalEmission + ammount * subProportion * emissionsBySubcategories(sub, ammount);
-            }
-        }, 0);
-    }
-
-    const emissionCategory = (category: FlatCategory, ammount: number): number => {
-        if (category.emissionFactor) {
-            return category.emissionFactor * ammount;
-        } else {
-            return emissionsBySubcategories(category, ammount);
-        }
-    }
-
-    const emission = (tx: Transaction): number => {
-        let cat = findCategoryByName(tx.category);
-        if (!cat) {
-            cat = categories["miscellaneous-others"];
-        }
-        const em = emissionCategory(cat, -tx.amount);
-        return em ? em : 0;
-    }
-
-    const monthlyData: { [key: string]: Data } = transactions.reduce<Record<string, Data>>(
-        (acc: { [key: string]: Data }, tx: Transaction) => {
+    const monthlyData = useMemo(() => {
+        const monthlyEmissions: Record<string, { month: string; carbon: number; monthKey: string }> = {};
+        
+        transactions.forEach(tx => {
+            if (!tx.date || !(tx.date instanceof Date) || tx.amount >= 0) return;
+            
             const date = new Date(tx.date);
-            const monthKey = `${date.getFullYear()}-${date.getMonth() + 1}`; // e.g., "2023-12"
-            const monthLabel = date.toLocaleString("default", { month: "short", year: "numeric" }); // e.g., "Dec 2023"
+            const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+            const monthLabel = date.toLocaleDateString('es-ES', { 
+                month: 'short', 
+                year: 'numeric' 
+            }).replace('.', '');
 
-            if (!acc[monthKey]) {
-                acc[monthKey] = { month: monthLabel, carbon: 0, };
+            if (!monthlyEmissions[monthKey]) {
+                monthlyEmissions[monthKey] = { month: monthLabel, carbon: 0, monthKey };
             }
 
-            if (tx.amount < 0) {
-                acc[monthKey].carbon += emission(tx);
-            }
-
-            return acc;
-        },
-        {}
-    );
-
-    const chartData: { month: string, carbon: number }[] = Object.values(monthlyData)
-        .map((data: Data) => ({
-            month: data.month,
-            carbon: parseFloat(data.carbon.toFixed(2)),
-        }))
-        .sort((d1, d2) => {
-            const parseDate = (monthYear: string): Date => {
-                const [month, year] = monthYear.split(" ");
-                const monthIndex = monthMap[month.toLowerCase()]; // Get the numeric index for the month
-                return new Date(Number(year), monthIndex);
-            };
-
-            const dateA = parseDate(d1.month);
-            const dateB = parseDate(d2.month);
-
-            return dateA.getTime() - dateB.getTime(); // Compare timestamps
+            monthlyEmissions[monthKey].carbon += CarbonCalculator.calculateTransactionEmission(tx);
         });
 
+        return Object.values(monthlyEmissions)
+            .map(data => ({
+                ...data,
+                carbon: Number(data.carbon.toFixed(2))
+            }))
+            .sort((a, b) => a.monthKey.localeCompare(b.monthKey));
+    }, [transactions]);
+
+    const pieColors = ['#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6', '#1abc9c', '#34495e'];
+
     return (
-        <div style={{ width: "100%", height: 300 }}>
-            <ResponsiveContainer>
-                <LineChart data={chartData}>
-                    <XAxis dataKey="month" />
-                    <YAxis tickFormatter={(value: number) => `${value.toFixed(2)}kg CO2e`} width={100} />
-                    <Tooltip formatter={(value: number) => `${value.toFixed(2)}kg CO2e`} />
-                    <Line dataKey="carbon" type="monotone" fill="#000000" name="Carbon" />
-                </LineChart>
-            </ResponsiveContainer>
+        <div className="carbon-footprint-container">
+            {/* Stats Cards */}
+            <div className="carbon-stats">
+                <div className="stat-card">
+                    <h3>Total CO₂e</h3>
+                    <p>{analysis.totalEmissions.toFixed(2)} kg</p>
+                </div>
+                <div className="stat-card">
+                    <h3>Promedio Mensual</h3>
+                    <p>{analysis.monthlyAverage.toFixed(2)} kg</p>
+                </div>
+                <div className="stat-card">
+                    <h3>Categoría Principal</h3>
+                    <p>{analysis.breakdown[0]?.category || 'N/A'}</p>
+                </div>
+            </div>
+
+            {/* View Toggle */}
+            <div className="view-toggle">
+                <button 
+                    className={view === 'timeline' ? 'active' : ''} 
+                    onClick={() => setView('timeline')}
+                >
+                    Línea de Tiempo
+                </button>
+                <button 
+                    className={view === 'breakdown' ? 'active' : ''} 
+                    onClick={() => setView('breakdown')}
+                >
+                    Por Categorías
+                </button>
+            </div>
+
+            {/* Charts */}
+            {view === 'timeline' ? (
+                <div className="chart-container">
+                    <h2>Emisiones Mensuales de CO₂e</h2>
+                    <ResponsiveContainer width="100%" height={400}>
+                        <LineChart data={monthlyData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="month" tick={{ fontSize: 12 }} />
+                            <YAxis tickFormatter={(value: number) => `${value} kg`} width={80} />
+                            <Tooltip 
+                                formatter={(value: number) => [`${value.toFixed(2)} kg CO₂e`, 'Emisiones']}
+                                labelFormatter={(label) => `Mes: ${label}`}
+                            />
+                            <Legend />
+                            <Line 
+                                dataKey="carbon" 
+                                type="monotone" 
+                                stroke="#e74c3c" 
+                                strokeWidth={3}
+                                name="Emisiones CO₂e"
+                                dot={{ fill: '#e74c3c', strokeWidth: 2, r: 4 }}
+                                activeDot={{ r: 6 }}
+                            />
+                        </LineChart>
+                    </ResponsiveContainer>
+                </div>
+            ) : (
+                <div className="chart-container">
+                    <h2>Emisiones por Categoría</h2>
+                    <ResponsiveContainer width="100%" height={400}>
+                        <PieChart>
+                            <Pie
+                                data={analysis.breakdown.slice(0, 7)} // Top 7 categories
+                                dataKey="emissions"
+                                nameKey="category"
+                                cx="50%"
+                                cy="50%"
+                                outerRadius={150}
+                                fill="#8884d8"
+                                label={({ category, percentage }) => `${category}: ${percentage.toFixed(1)}%`}
+                            >
+                                {analysis.breakdown.slice(0, 7).map((entry, index) => (
+                                    <Cell key={`cell-${index}`} fill={pieColors[index % pieColors.length]} />
+                                ))}
+                            </Pie>
+                            <Tooltip formatter={(value: number) => `${value.toFixed(2)} kg CO₂e`} />
+                        </PieChart>
+                    </ResponsiveContainer>
+                </div>
+            )}
+
+            {/* Recommendations */}
+            <div className="recommendations">
+                <h3>🌱 Recomendaciones para Reducir tu Huella de Carbono</h3>
+                <ul>
+                    {analysis.recommendations.map((rec, index) => (
+                        <li key={index}>{rec}</li>
+                    ))}
+                </ul>
+            </div>
         </div>
     );
 };
 
-export default TransactionChart;
+export default CarbonFootPrint;

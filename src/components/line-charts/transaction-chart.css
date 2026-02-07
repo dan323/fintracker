@@ -1,6 +1,8 @@
-/* Optional styling for spacing */
-.transaction-chart {
-    margin-top: 20px;
+.carbon-footprint-container {
+  padding: 20px;
+  background: #f8fffe;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .chart-controls {

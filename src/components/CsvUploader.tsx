@@ -2,8 +2,37 @@ import React from "react";
 import Papa from "papaparse";
 import { Transaction } from "../models/transaction";
 
+const parseDate = (dateString: string): Date => {
+
+    // First try direct Date parsing
+    const date = new Date(dateString);
+    if (!isNaN(date.getTime())) {
+        return date;
+    }
+
+    // If that fails, try manual parsing for common formats
+    if (dateString.includes('/')) {
+        const parts = dateString.split('/');
+        if (parts.length === 3) {
+            // Assume MM/DD/YYYY format first
+            const month = parseInt(parts[0]) - 1; // JavaScript months are 0-indexed
+            const day = parseInt(parts[1]);
+            const year = parseInt(parts[2]);
+            
+            const parsedDate = new Date(year, month, day);
+            if (!isNaN(parsedDate.getTime())) {
+                return parsedDate;
+            }
+        }
+    }
+
+    console.warn(`Could not parse date: ${dateString}`);
+    return new Date(); // Return current date as fallback
+};
+
 interface Props {
     onUpload: (transactions: Transaction[]) => void;
+    disabled?: boolean;
 }
 
 interface PreTransaction {
@@ -14,17 +43,20 @@ interface PreTransaction {
     account?: string,
 }
 
-const toDate = (date: string): Date => {
-    if (date.match("\\d\\d\\d\\d-\\d\\d-\\d\\d")) {
-        return new Date(date);
-    }
-    const matching = date.match("(\\d\\d)/(\\d\\d)/(\\d\\d\\d\\d)");
-    if (matching) {
-        return new Date(`${matching[3]}-${matching[1]}-${matching[2]}`);
-    }
-}
+const CsvUploader: React.FC<Props> = ({ onUpload, disabled = false }) => {
+    
+    const normalizeTransaction = (rawTransaction: any): Transaction => {
+    return {
+      ...rawTransaction,
+      date: typeof rawTransaction.date === 'string' 
+        ? parseDate(rawTransaction.date) 
+        : rawTransaction.date,
+      amount: typeof rawTransaction.amount === 'string' 
+        ? parseFloat(rawTransaction.amount) 
+        : rawTransaction.amount,
+    };
+  };
 
-const CsvUploader: React.FC<Props> = ({ onUpload }) => {
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (file) {
@@ -32,21 +64,21 @@ const CsvUploader: React.FC<Props> = ({ onUpload }) => {
                 header: true,
                 skipEmptyLines: true,
                 complete: (results: Papa.ParseResult<PreTransaction>) => {
-                    const transactions: Transaction[] = results.data.map((row: PreTransaction) => ({
+                    const transactions: any[] = results.data.map((row: PreTransaction) => ({
                         id: crypto.randomUUID(),
-                        date: toDate(row.date),
+                        date: row.date,
                         description: row.description || "",
-                        amount: parseFloat(row.amount),
+                        amount: row.amount,
                         category: row.category || "Others",
                         account: row.account || "Desconocida",
                     }));
-                    onUpload(transactions);
+                    onUpload(transactions.map(normalizeTransaction));
                 },
             });
         }
     };
 
-    return <input type="file" accept=".csv" onChange={handleFileChange} />;
+    return <input type="file" accept=".csv" onChange={handleFileChange} disabled={disabled} />;
 };
 
 export default CsvUploader;
