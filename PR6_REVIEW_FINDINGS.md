@@ -41,10 +41,16 @@ if (tx.category !== "Internal") {
 
 **Impact:** When the app displays in Spanish, transactions with category "Interno" won't be filtered out as internal movements, breaking the analytics logic.
 
-**Recommendation:** Use the translated category name:
+**Recommendation:** This reveals a deeper architectural issue. Categories should be stored using stable canonical keys (e.g., `'INTERNAL'`, `'OTHERS'`) in the data layer and translated only at display time. The comparison should then use the canonical key:
+```tsx
+if (tx.category !== 'INTERNAL') {
+```
+
+This requires refactoring how categories are stored and displayed throughout the application. As a short-term fix, you could use the translated category name:
 ```tsx
 if (tx.category !== t('categories.internal')) {
 ```
+But this is fragile and breaks when comparing persisted data created in one language with the app running in another language.
 
 ---
 
