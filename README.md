@@ -20,7 +20,7 @@ Instalar dependencias:
 npm install
 ```
 
-Ejecutar en modo desarrollo (abre http://localhost:3000):
+Ejecutar en modo desarrollo:
 
 ```powershell
 npm start
@@ -163,7 +163,7 @@ Los archivos de traducción están en `src/i18n/locales/`. Añade nuevas claves 
 npm start
 ```
 
-- Abre `http://localhost:3000` y usa el selector de idioma en la barra de controles para cambiar idioma en tiempo real.
+- Abre la applicación en local y usa el selector de idioma en la barra de controles para cambiar idioma en tiempo real.
 
 ---
 
