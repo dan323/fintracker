@@ -51,7 +51,7 @@ const TransactionChart: React.FC<Props> = ({ transactions }: Props) => {
             }
 
             // Do not show internal movements
-            if (tx.category !== 'Internal'){
+            if (tx.category !== t('categories.internal')){
                 if (tx.amount > 0) {
                     acc[monthKey].revenue += tx.amount;
                 } else {
@@ -87,7 +87,7 @@ const TransactionChart: React.FC<Props> = ({ transactions }: Props) => {
     return (
         <div>
             <Toggle className="chart-controls" label={t('chart.toggle.show')} onToggle={setShowRevenue}
-                textOn={t('chart.toggle.on')} textOff={t('chart.toggle.off')} />
+                textOn={t('chart.toggle.separate')} textOff={t('chart.toggle.totals')} />
             <div style={{ width: "100%", height: 300 }}>
                 <ResponsiveContainer>
                     <BarChart data={chartData}>
@@ -95,8 +95,8 @@ const TransactionChart: React.FC<Props> = ({ transactions }: Props) => {
                         <YAxis tickFormatter={(value: number) => `${value.toFixed(2)}€`} width={100} />
                         <Tooltip formatter={(value: number) => `${value.toFixed(2)}€`} />
                         {showRevenue && <Legend />}
-                        {showRevenue && <Bar dataKey="revenue" fill="#4caf50" name={t('chart.toggle.on')} />}
-                        {showRevenue && <Bar dataKey="expenditure" fill="#f44336" name={t('chart.toggle.off')} />}
+                        {showRevenue && <Bar dataKey="revenue" fill="#4caf50" name={t('chart.toggle.positive')} />}
+                        {showRevenue && <Bar dataKey="expenditure" fill="#f44336" name={t('chart.toggle.negative')} />}
                         {!showRevenue && <Bar dataKey="profit" fill="#000000" name="Totales">
                             {chartData.map((entry, index) => {
                                 return (

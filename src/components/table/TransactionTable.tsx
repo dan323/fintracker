@@ -25,9 +25,9 @@ const TransactionTable: React.FC<Props> = ({ transactions, onEdit, onDelete }) =
   }).sort((t1, t2) => new Date(t1.date).getTime() - new Date(t2.date).getTime());
 
   const map: Map<string,string> = new Map();
-  map.set('', t('chart.toggle.show'));
-  map.set('positive', t('chart.toggle.on'));
-  map.set('negative', t('chart.toggle.off'));
+  map.set('', t('chart.toggle.total'));
+  map.set('positive', t('chart.toggle.positive'));
+  map.set('negative', t('chart.toggle.negative'));
 
   return (
     <div>
