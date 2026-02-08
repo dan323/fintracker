@@ -1,11 +1,11 @@
 # PR #6 Quick Status Summary
 
-## Progress: 8/11 Fixed (73%) ✅
+## Progress: 7/11 Fixed (64%) ✅
 
 ```
-Critical Issues:     [■■■■□]  1/2 fixed (50%)
+Critical Issues:     [■■■□□]  1/2 fixed (50%)
 High Priority:       [□□□□□]  0/2 fixed (0%)
-Medium Priority:     [■■■■■■] 6/7 fixed (86%)
+Medium Priority:     [■■■■■□] 5/7 fixed (71%)
 ```
 
 ## What's Fixed ✅
@@ -17,7 +17,7 @@ Medium Priority:     [■■■■■■] 6/7 fixed (86%)
 - ❌ Locale initialization race condition
 - ❌ LocalStorage validation missing
 
-### Medium (6/7)
+### Medium (5/7)
 - ✅ Translation key consistency
 - ✅ Hardcoded Spanish in toggles
 - ✅ Hardcoded English in pie charts
