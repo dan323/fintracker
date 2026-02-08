@@ -97,7 +97,7 @@ const TransactionChart: React.FC<Props> = ({ transactions }: Props) => {
                         {showRevenue && <Legend />}
                         {showRevenue && <Bar dataKey="revenue" fill="#4caf50" name={t('chart.toggle.positive')} />}
                         {showRevenue && <Bar dataKey="expenditure" fill="#f44336" name={t('chart.toggle.negative')} />}
-                        {!showRevenue && <Bar dataKey="profit" fill="#000000" name="Totales">
+                        {!showRevenue && <Bar dataKey="profit" fill="#000000" name="t('chart.toggle.total')">
                             {chartData.map((entry, index) => {
                                 return (
                                     <Cell
