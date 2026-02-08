@@ -40,6 +40,7 @@
   "chart.toggle.categories": "Categories",
   "chart.toggle.positive": "Revenue",
   "chart.toggle.negative": "Expenses",
+  "button.label.backToAllCategories": "Back to all categories",
   "carbon.total": "Total CO₂e",
   "carbon.monthly": "Monthly Average",
   "carbon.label.month": "Month",

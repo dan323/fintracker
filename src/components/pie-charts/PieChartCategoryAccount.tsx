@@ -112,7 +112,7 @@ const PieChartCategoryAccount: React.FC<AnalyticsProps> = ({ transactions }: Ana
         <div className="analytics-container">
             {/* Back button to reset drill-down */}
             {selectedCategory && (
-                <button className="back-to-categories-btn" onClick={() => setSelectedCategory(null)}>{t('table.actions') === 'Actions' ? 'Back to All Categories' : 'Back to All Categories'}</button>
+                <button className="back-to-categories-btn" onClick={() => setSelectedCategory(null)}>{t('button.label.backToAllCategories')}</button>
             )}
 
             {/* Toggle for category/account grouping */}

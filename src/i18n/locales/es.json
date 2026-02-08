@@ -40,6 +40,7 @@
   "chart.toggle.separate": "Ingresos y Gastos",
   "chart.toggle.positive": "Ingresos",
   "chart.toggle.negative": "Gastos",
+  "button.label.backToAllCategories": "Volver a todas las categorías",
   "carbon.total": "Total CO₂e",
   "carbon.monthly": "Promedio Mensual",
   "carbon.label.month": "Mes",
