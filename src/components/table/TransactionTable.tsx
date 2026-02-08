@@ -32,7 +32,7 @@ const TransactionTable: React.FC<Props> = ({ transactions, onEdit, onDelete }) =
   return (
     <div>
       {/* Toggle Switch */}
-      <ToggleMultiple className="toggle-container" label="siendo mostrados" states={['','positive','negative']} stateTexts={map} onToggle={(st) => setType(st as ("" | "negative" | "positive"))}/>
+      <ToggleMultiple className="toggle-container" label={t('chart.toggle.show')} states={['','positive','negative']} stateTexts={map} onToggle={(st) => setType(st as ("" | "negative" | "positive"))}/>
 
       {/* Transaction Table */}
       <table className="transaction-table">
