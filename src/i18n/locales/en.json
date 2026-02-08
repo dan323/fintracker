@@ -31,7 +31,7 @@
   "table.delete": "Delete",
   "chart.toggle.show": "being shown",
   "chart.toggle.separate": "Income & Expenses",
-  "chart.toggle.totals": "Totals",
+  "chart.toggle.total": "Totals",
   "chart.toggle.account": "Accounts",
   "chart.toggle.categories": "Categories",
   "chart.toggle.positive": "Revenue",
