@@ -104,7 +104,7 @@ const CarbonFootPrint: React.FC<Props> = ({ transactions }) => {
                             <YAxis tickFormatter={(value: number) => `${value} kg`} width={80} />
                             <Tooltip 
                                 formatter={(value: number) => [`${value.toFixed(2)} kg CO₂e`, t('carbon.total')]}
-                                labelFormatter={(label) => `${t('filter.start')} ${label}`}
+                                labelFormatter={(label) => `${t('carbon.label.month')} ${label}`}
                             />
                             <Legend />
                             <Line 

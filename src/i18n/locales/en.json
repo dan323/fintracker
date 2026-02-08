@@ -42,6 +42,7 @@
   "chart.toggle.negative": "Expenses",
   "carbon.total": "Total CO₂e",
   "carbon.monthly": "Monthly Average",
+  "carbon.label.month": "Month",
   "carbon.topCategory": "Top Category",
   "carbon.timeline": "Timeline",
   "carbon.byCategory": "By Category",

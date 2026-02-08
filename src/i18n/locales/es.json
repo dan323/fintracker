@@ -42,6 +42,7 @@
   "chart.toggle.negative": "Gastos",
   "carbon.total": "Total CO₂e",
   "carbon.monthly": "Promedio Mensual",
+  "carbon.label.month": "Mes",
   "carbon.topCategory": "Categoría Principal",
   "carbon.timeline": "Línea de Tiempo",
   "carbon.byCategory": "Por Categorías",
