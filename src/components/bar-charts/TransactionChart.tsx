@@ -87,7 +87,7 @@ const TransactionChart: React.FC<Props> = ({ transactions }: Props) => {
     return (
         <div>
             <Toggle className="chart-controls" label={t('chart.toggle.show')} onToggle={setShowRevenue}
-                textOn={t('chart.toggle.separate')} textOff={t('chart.toggle.totals')} />
+                textOn={t('chart.toggle.separate')} textOff={t('chart.toggle.total')} />
             <div style={{ width: "100%", height: 300 }}>
                 <ResponsiveContainer>
                     <BarChart data={chartData}>
