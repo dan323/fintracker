@@ -71,8 +71,8 @@ const CsvUploader: React.FC<Props> = ({ onUpload, disabled = false }) => {
                         date: row.date,
                         description: row.description || "",
                         amount: row.amount,
-                        category: row.category || t('filter.selectCategory'),
-                        account: row.account || t('filter.account.placeholder'),
+                        category: row.category || t('categories.other'),
+                        account: row.account || t('account.unknown'),
                     }));
                     onUpload(transactions.map(normalizeTransaction));
                 },

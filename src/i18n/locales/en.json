@@ -1,6 +1,8 @@
 {
   "app.title": "Personal Finance",
+  "account.unknown": "Unknown Account",
   "categories.internal": "Internal",
+  "categories.other": "Other",
   "action.upload": "Upload transactions",
   "action.save": "Save transactions",
   "loading": "Loading...",

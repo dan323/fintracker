@@ -1,6 +1,8 @@
 {
   "app.title": "Finanzas personales",
+  "account.unknown": "Desconocida",
   "categories.internal": "Interno",
+  "categories.other": "Otros",
   "action.upload": "Subir movimientos",
   "action.save": "Guardar movimientos",
   "loading": "Cargando...",
