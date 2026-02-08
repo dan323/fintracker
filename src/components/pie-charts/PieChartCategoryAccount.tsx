@@ -68,7 +68,7 @@ const PieChartCategoryAccount: React.FC<AnalyticsProps> = ({ transactions }: Ana
                 acc[key] = { pos: 0, neg: 0 };
             }
 
-            if (tx.category !== "Internal") {
+            if (tx.category !== t('categories.internal') {
                 if (tx.amount > 0) {
                     acc[key].pos += tx.amount; // Income
                 } else {
