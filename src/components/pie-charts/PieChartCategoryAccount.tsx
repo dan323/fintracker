@@ -127,7 +127,7 @@ const PieChartCategoryAccount: React.FC<AnalyticsProps> = ({ transactions }: Ana
             <div className="pie-charts">
                 {/* Income Chart */}
                 <div className="chart">
-                    <h3>{selectedCategory ? `${selectedCategory} (${t('chart.toggle.positive')})` : `${t('chart.toggle.positive')} (${t('categories.main')})`}</h3>
+                    <h3>{selectedCategory ? `${selectedCategory} (${t('chart.toggle.positive')})` : `${t('chart.toggle.positive')} ${showByCategory?'('+t('categories.main')+')':''}`}</h3>
                     <PieChart width={400} height={700}>
                         <Pie
                             data={pieData.filter((d) => d.pos > 0).map((d) => ({ name: d.name, value: d.pos }))}
@@ -154,7 +154,7 @@ const PieChartCategoryAccount: React.FC<AnalyticsProps> = ({ transactions }: Ana
 
                 {/* Expense Chart */}
                 <div className="chart">
-                    <h3>{selectedCategory ? `${selectedCategory} (${t('chart.toggle.negative')})` : `${t('chart.toggle.negative')} (${t('categories.main')})`}</h3>
+                    <h3>{selectedCategory ? `${selectedCategory} (${t('chart.toggle.negative')})` : `${t('chart.toggle.negative')} ${showByCategory?'('+t('categories.main')+')':''}`}</h3>
                     <PieChart width={400} height={700}>
                         <Pie
                             data={pieData.filter((d) => d.neg > 0).map((d) => ({ name: d.name, value: d.neg }))}

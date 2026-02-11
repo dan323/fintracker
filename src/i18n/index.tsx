@@ -21,7 +21,14 @@ interface I18nContextValue {
 const I18nContext = createContext<I18nContextValue | undefined>(undefined);
 
 export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [locale, setLocale] = useState<Locale>('es');
+  const getInitialLocale = (): Locale => {
+    try {
+      const saved = window.localStorage.getItem('fintracker_locale');
+      if (isSupportedLocale(saved)) return saved;
+    } catch { }
+    return 'es';
+  };
+  const [locale, setLocale] = useState<Locale>(getInitialLocale());
 
   const t = (key: string, fallback = '') => {
     const val = resources[locale]?.[key];
@@ -34,6 +41,8 @@ export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
 };
+
+export const isSupportedLocale = (v: string | null) => v === 'es' || v === 'en';
 
 export const useTranslation = () => {
   const ctx = useContext(I18nContext);
