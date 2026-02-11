@@ -1,12 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import { ErrorBoundary } from "./components/common/ErrorBoundary";
-import CarbonFootPrint from "./components/line-charts/CarbonFootPrint";
 import CsvUploader from "./components/CsvUploader";
 import DuplicateResolver from "./components/DuplicateResolver";
 import Filtering from "./components/Filtering";
 import TransactionTable from "./components/table/TransactionTable";
-import PieChartCategoryAccount from "./components/pie-charts/PieChartCategoryAccount";
-import TransactionChart from "./components/bar-charts/TransactionChart";
+const PieChartCategoryAccount = React.lazy(() => import("./components/pie-charts/PieChartCategoryAccount"));
+const TransactionChart = React.lazy(() => import("./components/bar-charts/TransactionChart"));
+const CarbonFootPrint = React.lazy(() => import("./components/line-charts/CarbonFootPrint"));
 import { Transaction } from "./models/transaction";
 import { findDuplicates } from "./utils/deduplicate";
 import { loadFile, saveFile, useFilteredTransactions } from "./utils/transaction";
@@ -129,13 +129,19 @@ const App: React.FC = () => {
             </>
           )}
           {activeTab === "chart" && (
-            <TransactionChart transactions={filteredTransactions} />
+            <Suspense fallback={<div>Cargando gráficos...</div>}>
+              <TransactionChart transactions={filteredTransactions} />
+            </Suspense>
           )}
           {activeTab === "pie" && (
-            <PieChartCategoryAccount transactions={filteredTransactions} />
+            <Suspense fallback={<div>Cargando gráficos...</div>}>
+              <PieChartCategoryAccount transactions={filteredTransactions} />
+            </Suspense>
           )}
           {activeTab === "carbon" && (
-            <CarbonFootPrint transactions={filteredTransactions} />
+            <Suspense fallback={<div>Cargando gráficos...</div>}>
+              <CarbonFootPrint transactions={filteredTransactions} />
+            </Suspense>
           )}
         </div>
       </div>
