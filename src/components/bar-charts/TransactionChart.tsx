@@ -12,6 +12,7 @@ import {
 import Toggle from "../toggle-switch/Toggle";
 import './transaction-chart.css'
 import { Transaction } from "../../models/transaction";
+import { useTranslation } from '../../i18n';
 
 interface Props {
     transactions: Transaction[];
@@ -36,6 +37,7 @@ const monthMap: { [key: string]: number } = {
 };
 
 const TransactionChart: React.FC<Props> = ({ transactions }: Props) => {
+    const { t } = useTranslation();
     // Group transactions by month and calculate revenue/expenditure
     const [showRevenue, setShowRevenue] = useState(true);
     const monthlyData: { [key: string]: Data } = transactions.reduce<Record<string, Data>>(
@@ -49,7 +51,7 @@ const TransactionChart: React.FC<Props> = ({ transactions }: Props) => {
             }
 
             // Do not show internal movements
-            if (tx.category !== 'Internal'){
+            if (tx.category !== t('categories.internal')){
                 if (tx.amount > 0) {
                     acc[monthKey].revenue += tx.amount;
                 } else {
@@ -84,8 +86,8 @@ const TransactionChart: React.FC<Props> = ({ transactions }: Props) => {
 
     return (
         <div>
-            <Toggle className="chart-controls" label="siendo mostrados" onToggle={setShowRevenue}
-                textOn="Ingresos y Gastos" textOff="Totales" />
+            <Toggle className="chart-controls" label={t('chart.toggle.show')} onToggle={setShowRevenue}
+                textOn={t('chart.toggle.separate')} textOff={t('chart.toggle.total')} />
             <div style={{ width: "100%", height: 300 }}>
                 <ResponsiveContainer>
                     <BarChart data={chartData}>
@@ -93,9 +95,9 @@ const TransactionChart: React.FC<Props> = ({ transactions }: Props) => {
                         <YAxis tickFormatter={(value: number) => `${value.toFixed(2)}€`} width={100} />
                         <Tooltip formatter={(value: number) => `${value.toFixed(2)}€`} />
                         {showRevenue && <Legend />}
-                        {showRevenue && <Bar dataKey="revenue" fill="#4caf50" name="Ingresos" />}
-                        {showRevenue && <Bar dataKey="expenditure" fill="#f44336" name="Gastos" />}
-                        {!showRevenue && <Bar dataKey="profit" fill="#000000" name="Totales">
+                        {showRevenue && <Bar dataKey="revenue" fill="#4caf50" name={t('chart.toggle.positive')} />}
+                        {showRevenue && <Bar dataKey="expenditure" fill="#f44336" name={t('chart.toggle.negative')} />}
+                        {!showRevenue && <Bar dataKey="profit" fill="#000000" name="t('chart.toggle.total')">
                             {chartData.map((entry, index) => {
                                 return (
                                     <Cell

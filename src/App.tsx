@@ -1,20 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import { ErrorBoundary } from "./components/common/ErrorBoundary";
-import CarbonFootPrint from "./components/line-charts/CarbonFootPrint";
 import CsvUploader from "./components/CsvUploader";
 import DuplicateResolver from "./components/DuplicateResolver";
 import Filtering from "./components/Filtering";
 import TransactionTable from "./components/table/TransactionTable";
-import PieChartCategoryAccount from "./components/pie-charts/PieChartCategoryAccount";
-import TransactionChart from "./components/bar-charts/TransactionChart";
+const PieChartCategoryAccount = React.lazy(() => import("./components/pie-charts/PieChartCategoryAccount"));
+const TransactionChart = React.lazy(() => import("./components/bar-charts/TransactionChart"));
+const CarbonFootPrint = React.lazy(() => import("./components/line-charts/CarbonFootPrint"));
 import { Transaction } from "./models/transaction";
 import { findDuplicates } from "./utils/deduplicate";
 import { loadFile, saveFile, useFilteredTransactions } from "./utils/transaction";
 import "./App.css";
 import TabSelector from "./components/TabSelector";
 import { BrowserRouter } from "react-router-dom";
+import { useTranslation } from "./i18n";
+import LanguageSwitcher from "./components/LanguageSwitcher";
 
 const App: React.FC = () => {
+  const { t } = useTranslation();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [duplicates, setDuplicates] = useState<Transaction[]>([]);
   const [activeTab, setActiveTab] = useState<string>("table");
@@ -32,7 +35,7 @@ const App: React.FC = () => {
       await loadFile().then(setTransactions);
     } catch (error) {
       console.log("No file selected or error loading file:", error);
-      setError("Error al cargar el archivo");
+      setError(t('error.load'));
     } finally {
       setIsLoading(false);
     }
@@ -46,7 +49,7 @@ const App: React.FC = () => {
       await saveFile(transactions);
     } catch (error) {
       console.log("Error saving file:", error);
-      setError("Error al guardar el archivo");
+      setError(t('error.save'));
     } finally {
       setIsLoading(false);
     }
@@ -81,9 +84,9 @@ const App: React.FC = () => {
 
   return (
     <ErrorBoundary>
-    <BrowserRouter basename="/fintracker">
+    <BrowserRouter basename={import.meta.env.BASE_URL || '/'}>
       <div className="app-container">
-        <h1 className="app-title">Finanzas personales</h1>
+        <h1 className="app-title">{t('app.title')}</h1>
         {error && (
             <div className="error-message">
               {error}
@@ -92,14 +95,15 @@ const App: React.FC = () => {
           )}
         <div className="app-controls">
           <button className="action-button" onClick={loadTransactions}>
-            {isLoading ? "Pensando..." : "Subir movimientos"}
+            {isLoading ? t('loading.thinking') : t('action.upload')}
           </button>
           <button className="action-button" onClick={saveTransactions}>
-            {isLoading ? "Pensando..." : "Guardar movimientos"}
+            {isLoading ? t('loading.thinking') : t('action.save')}
           </button>
           <CsvUploader onUpload={handleUpload} disabled={isLoading} />
+          <LanguageSwitcher />
         </div>
-          {isLoading && <div className="loading-spinner">Cargando...</div>}
+          {isLoading && <div className="loading-spinner">{t('loading')}</div>}
         <Filtering />
         <TabSelector activeTab={activeTab} setActiveTab={setActiveTab} />
         <div className="tab-content">
@@ -125,13 +129,19 @@ const App: React.FC = () => {
             </>
           )}
           {activeTab === "chart" && (
-            <TransactionChart transactions={filteredTransactions} />
+            <Suspense fallback={<div>Cargando gráficos...</div>}>
+              <TransactionChart transactions={filteredTransactions} />
+            </Suspense>
           )}
           {activeTab === "pie" && (
-            <PieChartCategoryAccount transactions={filteredTransactions} />
+            <Suspense fallback={<div>Cargando gráficos...</div>}>
+              <PieChartCategoryAccount transactions={filteredTransactions} />
+            </Suspense>
           )}
           {activeTab === "carbon" && (
-            <CarbonFootPrint transactions={filteredTransactions} />
+            <Suspense fallback={<div>Cargando gráficos...</div>}>
+              <CarbonFootPrint transactions={filteredTransactions} />
+            </Suspense>
           )}
         </div>
       </div>
