@@ -1,5 +1,5 @@
 import React, { useState, Suspense } from "react";
-import { ErrorBoundary } from "./components/common/ErrorBoundary";
+import ErrorBoundary from "./components/common/ErrorBoundary";
 import CsvUploader from "./components/CsvUploader";
 import DuplicateResolver from "./components/DuplicateResolver";
 import Filtering from "./components/Filtering";
@@ -129,17 +129,17 @@ const App: React.FC = () => {
             </>
           )}
           {activeTab === "chart" && (
-            <Suspense fallback={<div>Cargando gráficos...</div>}>
+            <Suspense fallback={<div>${t('loading')}</div>}>
               <TransactionChart transactions={filteredTransactions} />
             </Suspense>
           )}
           {activeTab === "pie" && (
-            <Suspense fallback={<div>Cargando gráficos...</div>}>
+            <Suspense fallback={<div>${t('loading')}</div>}>
               <PieChartCategoryAccount transactions={filteredTransactions} />
             </Suspense>
           )}
           {activeTab === "carbon" && (
-            <Suspense fallback={<div>Cargando gráficos...</div>}>
+            <Suspense fallback={<div>${t('loading')}</div>}>
               <CarbonFootPrint transactions={filteredTransactions} />
             </Suspense>
           )}
