@@ -17,7 +17,7 @@ const normalizeKeys = (obj: any): any => {
 };
 
 // Add this new function to ensure dates are properly converted
-const normalizeTransaction = (tx: any): Transaction => {
+export const normalizeTransaction = (tx: any): Transaction => {
     return {
         ...tx,
         date: typeof tx.date === 'string' ? new Date(tx.date) : tx.date,
@@ -25,7 +25,7 @@ const normalizeTransaction = (tx: any): Transaction => {
     };
 };
 
-const normalizeTransactions = (transactions: any[]): Transaction[] => {
+export const normalizeTransactions = (transactions: any[]): Transaction[] => {
     return transactions.map(normalizeTransaction);
 };
 
