@@ -1,1 +1,0 @@
-import{j as p}from"./vendor_react-Djc1MftW.js";import{T as f}from"./index-DbACWYKZ.js";const T=({className:t,textOn:s,textOff:e,onToggle:n,label:r})=>{const o=new Map;return o.set("on",s),o.set("off",e),p.jsx(f,{onToggle:a=>n(a==="on"),className:t,label:r,states:["on","off"],stateTexts:o})};export{T};
