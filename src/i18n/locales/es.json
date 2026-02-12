@@ -49,6 +49,9 @@
   "carbon.byCategory": "Por Categorías",
   "carbon.monthlyEmissions": "Emisiones Mensuales de CO₂e",
   "carbon.byCategoryTitle": "Emisiones por Categoría",
-  "carbon.recommendations": "🌱 Recomendaciones para Reducir tu Huella de Carbono"
+  "carbon.recommendations": "🌱 Recomendaciones para Reducir tu Huella de Carbono",
+  "errorBoundary.title": "¡Ups! Algo salió mal.",
+  "errorBoundary.message": "Parece que ha ocurrido un error inesperado.\n Por favor, intenta recargar la página o vuelve a intentarlo más tarde.",
+  "errorBoundary.button": "Recargar"
 }
 

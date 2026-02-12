@@ -49,6 +49,9 @@
   "carbon.byCategory": "By Category",
   "carbon.monthlyEmissions": "Monthly CO₂e Emissions",
   "carbon.byCategoryTitle": "Emissions by Category",
-  "carbon.recommendations": "🌱 Recommendations to Reduce Your Carbon Footprint"
+  "carbon.recommendations": "🌱 Recommendations to Reduce Your Carbon Footprint",
+  "errorBoundary.title": "Oops! Something went wrong.",
+  "errorBoundary.message": "It seems an unexpected error has occurred.\n Please try reloading the page or come back later.",
+  "errorBoundary.button": "Reload"
 }
 

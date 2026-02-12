@@ -1,8 +1,10 @@
 // src/components/common/ErrorBoundary.tsx
 import React, { Component, ErrorInfo, ReactNode } from 'react'
+import { useTranslation } from '../../i18n'
 
 interface Props {
   children: ReactNode
+  t: (key: string, fallback?: string) => string
 }
 
 interface State {
@@ -25,13 +27,15 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   render() {
+    const { t } = this.props
+
     if (this.state.hasError) {
       return (
         <div className="error-fallback">
-          <h2>Algo salió mal</h2>
-          <p>Ha ocurrido un error inesperado. Por favor, recarga la página.</p>
+          <h2>{t('errorBoundary.title')}</h2>
+          <p>{t('errorBoundary.message')}</p>
           <button onClick={() => window.location.reload()}>
-            Recargar página
+            {t('errorBoundary.reload')}
           </button>
         </div>
       )
@@ -40,3 +44,11 @@ export class ErrorBoundary extends Component<Props, State> {
     return this.props.children
   }
 }
+
+// Functional wrapper that reads `t` from the local I18n context and passes it to the class component
+const ErrorBoundaryWithT: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const { t } = useTranslation()
+  return <ErrorBoundary t={t}>{children}</ErrorBoundary>
+}
+
+export default ErrorBoundaryWithT
