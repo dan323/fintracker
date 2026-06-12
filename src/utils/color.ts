@@ -1,5 +1,4 @@
-import { categories } from "../models/categories";
-import { toCategoryId } from "./categories";
+import { toCategory } from "./categories";
 
 export interface Color {
     r: number,
@@ -156,6 +155,6 @@ const toString = (color: Color) => {
 
 // Get the adjusted color based on transaction type
 export const getColorForTransaction = (category: string) => {
-    const cat = categories[toCategoryId(category)];
+    const cat = toCategory(category);
     return toString(categoryColors[cat.name] || categoryColors["Others"]);
 };

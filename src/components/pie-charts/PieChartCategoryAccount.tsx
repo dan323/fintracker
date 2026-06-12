@@ -5,8 +5,7 @@ import Toggle from "../toggle-switch/Toggle";
 import "./pie-charts.css";
 import { getColorForTransaction } from "../../utils/color";
 import { Props } from "recharts/types/component/DefaultLegendContent";
-import { findCategoryByName, isUnderCategory, parentCategory, subCategories, toCategoryId } from "../../utils/categories";
-import { categories } from "../../models/categories";
+import { findCategoryByName, isUnderCategory, parentCategory, subCategories, toCategory } from "../../utils/categories";
 import { useTranslation } from '../../i18n';
 
 interface AnalyticsProps {
@@ -51,14 +50,14 @@ const PieChartCategoryAccount: React.FC<AnalyticsProps> = ({ transactions }: Ana
         if (!selectedCategory) {
             return transactions;
         }
-        return transactions.filter((tx) => isUnderCategory(categories[toCategoryId(tx.category)], findCategoryByName(selectedCategory)));
+        return transactions.filter((tx) => isUnderCategory(toCategory(tx.category), findCategoryByName(selectedCategory)));
     }, [transactions, selectedCategory]);
 
     // Aggregate data (separately for income and expenses)
     const aggregatedData = useMemo(() => {
         return filteredTransactions.reduce<{ [key: string]: { pos: number; neg: number } }>((acc, tx) => {
             // Transactions store category ids; resolve once for display.
-            const txCategory = categories[toCategoryId(tx.category)];
+            const txCategory = toCategory(tx.category);
             const key = showByCategory
                 ? selectedCategory
                     ? txCategory.name // Show subcategories if a category is selected

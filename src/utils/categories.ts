@@ -45,9 +45,16 @@ export const toCategoryId = (input: string | undefined | null): string => {
     return categoryIdByNormalizedKey[normalizeForLookup(input)] ?? FALLBACK_CATEGORY_ID;
 }
 
+/**
+ * Resolves arbitrary category input to its FlatCategory. Never returns
+ * undefined: unknown input resolves to the fallback category.
+ */
+export const toCategory = (input: string | undefined | null): FlatCategory =>
+    categories[toCategoryId(input)] ?? categories[FALLBACK_CATEGORY_ID];
+
 /** Display name for a transaction category (id or legacy free text). */
 export const categoryName = (category: string): string =>
-    categories[toCategoryId(category)].name;
+    toCategory(category).name;
 
 export const subCategories = (cat: FlatCategory): FlatCategory[] => {
     return Object.values(categories).filter((c) => isUnderCategory(c, cat) && c.id !== cat.id);
