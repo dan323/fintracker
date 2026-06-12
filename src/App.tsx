@@ -8,7 +8,7 @@ const PieChartCategoryAccount = React.lazy(() => import("./components/pie-charts
 const TransactionChart = React.lazy(() => import("./components/bar-charts/TransactionChart"));
 const CarbonFootPrint = React.lazy(() => import("./components/line-charts/CarbonFootPrint"));
 import { Transaction } from "./models/transaction";
-import { findDuplicates } from "./utils/deduplicate";
+import { findDuplicates, isDuplicateOf } from "./utils/deduplicate";
 import { loadFile, saveFile, useFilteredTransactions } from "./utils/transaction";
 import "./App.css";
 import TabSelector from "./components/TabSelector";
@@ -74,8 +74,11 @@ const App: React.FC = () => {
     if (action === "keep") {
       setTransactions((prev) => [...prev, transaction]);
     } else if (action === "replace") {
+      // The incoming duplicate has a freshly generated id, so it can never
+      // match an existing transaction by id. Locate the existing transaction
+      // through the duplicate key (date + amount + account) instead.
       setTransactions((prev) =>
-        prev.map((tx) => (tx.id === transaction.id ? transaction : tx))
+        prev.map((tx) => (isDuplicateOf(tx, transaction) ? transaction : tx))
       );
     }
 
