@@ -32,6 +32,8 @@
   "table.actions": "Acciones",
   "table.edit": "Editar",
   "table.delete": "Eliminar",
+  "table.save": "Guardar",
+  "table.cancel": "Cancelar",
   "chart.toggle.show": "siendo mostrados",
   "chart.toggle.group": "siendo agrupadas",
   "chart.toggle.total": "Totales",

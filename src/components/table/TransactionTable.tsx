@@ -10,9 +10,31 @@ interface Props {
   onDelete: (id: string) => void;
 }
 
+interface Draft {
+  date: string;
+  description: string;
+  amount: string;
+  category: string;
+  account: string;
+}
+
+const toDraft = (tx: Transaction): Draft => ({
+  date: tx.date.toISOString().slice(0, 10),
+  description: tx.description,
+  amount: String(tx.amount),
+  category: tx.category,
+  account: tx.account,
+});
+
+const isDraftValid = (draft: Draft): boolean =>
+  !Number.isNaN(parseFloat(draft.amount)) &&
+  !Number.isNaN(new Date(draft.date).getTime());
+
 const TransactionTable: React.FC<Props> = ({ transactions, onEdit, onDelete }) => {
   const { t } = useTranslation();
   const [type, setType] = useState<"" | "positive" | "negative">("");
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [draft, setDraft] = useState<Draft | null>(null);
 
   const sortedTransactions = transactions.filter((tx) => {
     if (type === 'negative') {
@@ -28,6 +50,34 @@ const TransactionTable: React.FC<Props> = ({ transactions, onEdit, onDelete }) =
   map.set('', t('chart.toggle.total'));
   map.set('positive', t('chart.toggle.positive'));
   map.set('negative', t('chart.toggle.negative'));
+
+  const startEditing = (tx: Transaction) => {
+    setEditingId(tx.id);
+    setDraft(toDraft(tx));
+  };
+
+  const cancelEditing = () => {
+    setEditingId(null);
+    setDraft(null);
+  };
+
+  const saveEditing = (tx: Transaction) => {
+    if (!draft || !isDraftValid(draft)) {
+      return;
+    }
+    onEdit({
+      ...tx,
+      date: new Date(draft.date),
+      description: draft.description,
+      amount: parseFloat(draft.amount),
+      category: draft.category,
+      account: draft.account,
+    });
+    cancelEditing();
+  };
+
+  const updateDraft = (field: keyof Draft, value: string) =>
+    setDraft((prev) => (prev ? { ...prev, [field]: value } : prev));
 
   return (
     <div>
@@ -48,23 +98,80 @@ const TransactionTable: React.FC<Props> = ({ transactions, onEdit, onDelete }) =
         </thead>
         <tbody>
           {sortedTransactions.map((tx: Transaction) =>
-          (<tr key={tx.id}>
-            <td>{`${tx.date.toISOString().slice(0, 10)}`}</td>
-            <td>{tx.description}</td>
-            <td>{tx.amount.toFixed(2)}</td>
-            <td>{tx.category}</td>
-            <td>{tx.account}</td>
-            <td>
-              <button className="edit-btn" onClick={() => onEdit(tx)}>
-                {t('table.edit')}
-              </button>
-              <button className="delete-btn" onClick={() => onDelete(tx.id)}>
-                {t('table.delete')}
-              </button>
-            </td>
-          </tr>
-          ))
-          }
+            editingId === tx.id && draft ? (
+              <tr key={tx.id} className="editing-row">
+                <td>
+                  <input
+                    type="date"
+                    aria-label={t('table.date')}
+                    value={draft.date}
+                    onChange={(e) => updateDraft('date', e.target.value)}
+                  />
+                </td>
+                <td>
+                  <input
+                    type="text"
+                    aria-label={t('table.description')}
+                    value={draft.description}
+                    onChange={(e) => updateDraft('description', e.target.value)}
+                  />
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    step="0.01"
+                    aria-label={t('table.amount')}
+                    value={draft.amount}
+                    onChange={(e) => updateDraft('amount', e.target.value)}
+                  />
+                </td>
+                <td>
+                  <input
+                    type="text"
+                    aria-label={t('table.category')}
+                    value={draft.category}
+                    onChange={(e) => updateDraft('category', e.target.value)}
+                  />
+                </td>
+                <td>
+                  <input
+                    type="text"
+                    aria-label={t('table.account')}
+                    value={draft.account}
+                    onChange={(e) => updateDraft('account', e.target.value)}
+                  />
+                </td>
+                <td>
+                  <button
+                    className="edit-btn"
+                    onClick={() => saveEditing(tx)}
+                    disabled={!isDraftValid(draft)}
+                  >
+                    {t('table.save')}
+                  </button>
+                  <button className="delete-btn" onClick={cancelEditing}>
+                    {t('table.cancel')}
+                  </button>
+                </td>
+              </tr>
+            ) : (
+              <tr key={tx.id}>
+                <td>{`${tx.date.toISOString().slice(0, 10)}`}</td>
+                <td>{tx.description}</td>
+                <td>{tx.amount.toFixed(2)}</td>
+                <td>{tx.category}</td>
+                <td>{tx.account}</td>
+                <td>
+                  <button className="edit-btn" onClick={() => startEditing(tx)}>
+                    {t('table.edit')}
+                  </button>
+                  <button className="delete-btn" onClick={() => onDelete(tx.id)}>
+                    {t('table.delete')}
+                  </button>
+                </td>
+              </tr>
+            )
+          )}
         </tbody>
       </table>
     </div>
