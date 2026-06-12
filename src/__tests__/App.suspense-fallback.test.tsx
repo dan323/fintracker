@@ -16,6 +16,9 @@ import App from '../App';
 
 describe('Suspense loading fallbacks', () => {
   beforeEach(() => {
+    // The tests assert Spanish UI strings; pin the locale so a stray
+    // localStorage value can never make the suite order-dependent.
+    window.localStorage.setItem('fintracker_locale', 'es');
     window.history.pushState({}, '', import.meta.env.BASE_URL || '/');
   });
 
