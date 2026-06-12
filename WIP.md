@@ -1,185 +1,111 @@
-# Plan para Aplicación Client-Side de Finanzas Personales
+# WIP — Plan de lanzamiento a producción (v1.0)
 
-## **Tecnologías Base**
+**Objetivo**: publicar FinTracker v1.0 en GitHub Pages (`https://dan323.github.io/fintracker`), estable y usable, lo antes posible. Todo lo que no sea esencial para la v1.0 pasa al backlog post-lanzamiento (sección final).
 
-- **UI**: React con TypeScript.
-- **Gestor de Estado**: React Context API o React Reducer (sin librerías adicionales).
-- **Parsers**: PapaParse para leer archivos CSV.
-- **Formato de Almacenamiento Local**: Archivos JSON para persistencia en el sistema de archivos del usuario.
+**Estrategia**: primero corregir bugs reales, después poner el CI en verde (tests + typecheck + audit), después completar el mínimo de producto, y por último pulir y lanzar. No se añade ninguna feature nueva que no esté en las Fases 1–4.
 
 ---
 
-## **1. Arquitectura del Proyecto**
+## Estado actual (revisión completa: 2026-06-11)
 
-### **Estructura del Proyecto**
+Verificado ejecutando build, tests y audit en local:
 
-1. **src/models**:
-   - Definir interfaces y tipos.
-   - ⚡ **Nuevo**: Añadir validación con Zod schemas
-   - ⚡ **Nuevo**: Tipos más específicos (TransactionType, Account)
-2. **src/components**:
-   - Componentes React modulares.
-   - ⚡ **Nuevo**: Componentes accesibles y reutilizables
-   - ⚡ **Nuevo**: Virtualización para tablas grandes
-3. **src/context**:
-   - ⚡ **Nuevo**: ThemeContext para dark mode
-   - ⚡ **Nuevo**: Considerar migración a Zustand/Redux Toolkit
-4. **src/utils**:
-   - ⚡ **Nuevo**: Web Workers para filtrado pesado
-   - ⚡ **Nuevo**: Encriptación de datos sensibles
-5. **src/hooks**:
-   - ⚡ **Nuevo**: Custom hooks para manejo de estado asíncrono
-6. **src/config**:
-   - ⚡ **Nuevo**: Configuración centralizada de la app
-7. **src/i18n**:
-   - ⚡ **Nuevo**: Internacionalización con i18next
-8. **\_\_tests\_\_**:
-   - ⚡ **Nuevo**: Tests unitarios y de integración
+- ✅ Build de producción funciona (`npm run build`, Vite, chunks vendor separados, charts lazy-loaded)
+- ✅ 25 tests pasan (9 ficheros, Vitest + Testing Library)
+- ✅ Import CSV (PapaParse), carga/guardado JSON + MessagePack con File System Access API y fallbacks
+- ✅ Detección de duplicados + UI de resolución (con bugs, ver Fase 1)
+- ✅ Filtros: categorías jerárquicas, cuenta, rango de fechas
+- ✅ Tabla, gráfico de barras, gráfico circular, huella de carbono con recomendaciones
+- ✅ i18n ES/EN con selector y persistencia en localStorage
+- ✅ ErrorBoundary, estados de carga, CI con deploy automático a gh-pages
+- ❌ `npm audit`: 15 vulnerabilidades (2 críticas, 6 altas — `lodash` es dependencia de runtime vía recharts). El workflow `dependency-scan` está fallando.
+- ❌ `tsc --noEmit` falla (TS4 con tipos de React 19, `@types/react-router-dom` v5 obsoleto junto a router v7, tsconfig incompleto). El CI no hace typecheck.
+- ❌ Varios bugs funcionales detectados en revisión de código (Fase 1)
 
 ---
 
-## **2. Funcionalidades Principales**
+## Fase 1 — Bugs bloqueantes (corregir antes de nada)
 
-### **2.1. Gestor de Transacciones**
+Cada fix debe llevar su test de regresión.
 
-- Tabla para visualizar transacciones.✅
-- Detección y resolución de duplicados.✅
-- Soporte para categorías personalizables (opcional).
-- Editar transacciones.
-- Borrar transacciones.✅
-- ⚡ **Mejora**: Virtualización para manejar miles de transacciones
-- ⚡ **Mejora**: Búsqueda y filtrado en tiempo real
-- ⚡ **Mejora**: Exportación a diferentes formatos (CSV, PDF, Excel)
-
-### **2.2. Sistema de Plug-ins**
-
-- Create a small backend for security purposes.
-- Integrate Plaid.
-- ⚡ **Mejora**: Sistema de plugins dinámico y extensible
-- ⚡ **Mejora**: API para integraciones de terceros
-
-### **2.3. Gestor de Archivos Locales**
-
-- Guardar datos en el sistema de archivos local como JSON u otros.✅
-- Monitorear cambios en el archivo JSON para actualizar la UI (opcional).
-- ⚡ **Mejora**: Encriptación de archivos sensibles
-- ⚡ **Mejora**: Backup automático y versionado
-- ⚡ **Mejora**: Compresión de datos con MessagePack
-
-### **2.4. Subida Manual de CSV y Resolución de Duplicados**
-
-- Parsear archivos CSV.✅ (No probado)
-- Detectar duplicados comparando atributos clave: **fecha**, **monto**, **cuenta**.✅ (No probado)
-- Proporcionar opciones para manejar duplicados: mantener, reemplazar o ignorar.✅ (No probado)
-- ⚡ **Mejora**: Validación de esquemas con Zod
-- ⚡ **Mejora**: Preview de datos antes de importar
-- ⚡ **Mejora**: Mapeo automático de columnas
-- ⚡ **Mejora**: Manejo de errores más robusto
-
-### **2.5. Calcular la huella de carbono**
-
-- Computar la huella de carbono en función de los gastos.✅
-- Computar la huella de carbono en función del área geográfica
-- ⚡ **Mejora**: Base de datos actualizable de factores de emisión
-- ⚡ **Mejora**: Comparativas con promedios nacionales/internacionales
-- ⚡ **Mejora**: Sugerencias para reducir huella de carbono
-
-### **2.6. Filtrar por categorías, rango de fechas, fuente del movimiento**
-
-- Filtrar por grupo de categorías.✅
-- Cuando se filtra por todas las subcategorías de una categoría, añadirla al filtrar y borrar las subcategorías (opcional).
-- Filtrar por rango de fechas.✅
-- Filtrar por fuente del movimiento.✅
-- ⚡ **Mejora**: Filtros guardados y reutilizables
-- ⚡ **Mejora**: Filtros avanzados (rangos de montos, texto libre)
-- ⚡ **Mejora**: Rendimiento optimizado con Web Workers
-
-### **2.7. Hacer mejoras de UI**
-
-- ⚡ **Nuevo**: Dark mode / Light mode toggle
-- ⚡ **Nuevo**: Responsive design para móviles
-- ⚡ **Nuevo**: Animaciones y transiciones suaves
-- ⚡ **Nuevo**: Componentes accesibles (ARIA, navegación por teclado)
-- ⚡ **Nuevo**: Drag & drop para reorganizar elementos
-- ⚡ **Nuevo**: Tooltips informativos y ayuda contextual
-
-### **2.8. Internacionalización del texto**
-
-- ⚡ **Nuevo**: Soporte para múltiples idiomas (ES, EN)
-- ⚡ **Nuevo**: Formateo de monedas y fechas por región
-- ⚡ **Nuevo**: Detección automática del idioma del navegador
+- [ ] **Auto-guardado tras importar CSV guarda estado obsoleto** — `App.tsx` (`handleUpload`): llama a `saveTransactions()` justo después de `setTransactions(...)`, pero `saveTransactions` lee la variable `transactions` del closure (estado anterior), así que el fichero guardado NO incluye las transacciones recién importadas. Pasar la lista nueva explícitamente o eliminar el auto-guardado.
+- [ ] **"Reemplazar" duplicado no hace nada** — `App.tsx` (`handleResolveDuplicate`): el duplicado entrante tiene un UUID recién generado, así que `prev.map(tx => tx.id === transaction.id ? ...)` nunca encuentra coincidencia. Hay que buscar la transacción existente por la clave de duplicado (fecha + importe + cuenta), no por id.
+- [ ] **Botón "Editar" no funciona** — `App.tsx` pasa `onEdit` que solo hace `console.log`. Para v1.0: implementar edición (inline o modal) **o** ocultar el botón. Decidir y no dejar UI muerta.
+- [ ] **Cancelar el selector de ficheros muestra error** — `App.tsx` (`loadTransactions`): el `AbortError` del file picker se trata como error real y muestra el banner "Error al cargar". Distinguir cancelación de fallo.
+- [ ] **`$` literal visible en los fallbacks de Suspense** — `App.tsx` líneas con `<div>${t('loading')}</div>` (3 sitios): es JSX, no template string; renderiza "$Cargando...". Quitar el `$`.
+- [ ] **Modelo de categorías inconsistente (ids vs nombres)** — decisión arquitectónica pendiente y bug real:
+  - El filtro (`Filtering.tsx`) guarda **ids** (`food-and-dining-groceries`), la calculadora de carbono (`carbon-calculator.ts`) busca por **nombre** (`findCategoryByName`), y el CSV importa **texto libre**. Cada camino funciona con datos distintos; no pueden funcionar todos a la vez.
+  - Propuesta: `Transaction.category` siempre contiene el **id** canónico. El import CSV mapea nombre→id (con fallback a `miscellaneous-others`). La tabla y los gráficos traducen id→nombre localizado al renderizar.
+  - Ajustar `useFilteredTransactions`, `CarbonCalculator`, `TransactionTable` y los tests.
+- [ ] **Filtro de cuenta con coincidencia exacta sobre input libre** — `transaction.ts` (`useFilteredTransactions`): mientras escribes, la tabla se vacía hasta teclear el nombre completo. Cambiar a `includes` case-insensitive o a un `<select>` con las cuentas presentes en los datos.
 
 ---
 
-## **3. Mejoras Técnicas y Calidad**
+## Fase 2 — Salud técnica: CI en verde
 
-### **3.1. Manejo de Estado y Rendimiento**
-
-- ✅ Implementar error boundaries
-- ✅ Añadir estados de carga y manejo de errores
-- ⚡ **Prioridad Media**: Migrar a Zustand o Redux Toolkit
-- ⚡ **Prioridad Media**: Memoización de componentes pesados
-- ⚡ **Prioridad Baja**: Service Workers para cache offline
-
-### **3.2. Seguridad y Privacidad**
-
-- ⚡ **Prioridad Alta**: Encriptación de datos financieros
-- ⚡ **Prioridad Media**: Validación de entrada robusta
-- ⚡ **Prioridad Media**: Sanitización de datos CSV
-- ⚡ **Prioridad Baja**: Modo privado sin persistencia
-
-### **3.3. Testing y Calidad de Código**
-
-- ⚡ **Prioridad Alta**: Tests unitarios para utils y hooks
-- ⚡ **Prioridad Media**: Tests de integración para componentes
-- ⚡ **Prioridad Media**: Tests e2e con Playwright
-- ⚡ **Prioridad Media**: Linting y formatting automático
-- ⚡ **Prioridad Baja**: Coverage reports y CI/CD
-
-### **3.4. Developer Experience**
-
-- ⚡ **Prioridad Alta**: Hot reloading y fast refresh
-- ⚡ **Prioridad Media**: Storybook para componentes
-- ⚡ **Prioridad Media**: Documentación automática con JSDoc
-- ⚡ **Prioridad Baja**: Bundle analyzer y optimización
+- [ ] **Resolver `npm audit`** — `npm audit fix` arregla casi todo (lodash, minimatch, brace-expansion…). Revisar si esbuild/vite necesitan bump mayor. Objetivo: 0 high/critical y workflow `dependency-scan` verde.
+- [ ] **Sanear TypeScript**:
+  - Eliminar `@types/react-router-dom` (router v7 trae sus propios tipos).
+  - Subir `typescript` a `^5` (los tipos de React 19 lo requieren).
+  - tsconfig moderno: `"module": "esnext"`, `"moduleResolution": "bundler"`, `"skipLibCheck": true`, `"include": ["src"]`, `"types": ["vitest/globals"]`. Activar `strict` (si genera demasiado ruido, activarlo por flags en dos pasos, pero antes de v1).
+- [ ] **Añadir typecheck al CI** — script `"typecheck": "tsc --noEmit"` en package.json y paso correspondiente en `ci.yml`. Vite no comprueba tipos al hacer build; ahora mismo nada lo hace.
+- [ ] **Decidir el router** — `BrowserRouter` no tiene ninguna ruta definida y pesa ~33 kB: quitarlo (las pestañas ya son estado local), **o** mover las pestañas a la URL. Si se queda un router en gh-pages, hace falta fallback `404.html`. Recomendación para v1: quitarlo.
+- [ ] **Limpieza de producción**:
+  - `reportWebVitals(console.log)` en `index.tsx` — eliminar o condicionar a DEV.
+  - `console.log`/`console.warn` repartidos por la app — quitar o condicionar a DEV.
+  - Campo `bussines?: boolean` (typo, sin uso) en `models/transaction.ts` — eliminar.
+  - Categorías de ingresos comentadas en `models/categories.ts` ("// ... rest of income categories") — completarlas o eliminar el bloque muerto.
+  - `dependency-scan.yml` sube un artefacto `audit.json` que nunca se genera — generar el fichero o quitar el paso.
 
 ---
 
-## **4. Roadmap de Implementación**
+## Fase 3 — Mínimos de producto para v1.0
 
-### **Fase 1: Estabilización (Semanas 1-2)**
-
-- ✅ Fix react-router-dom installation
-- ✅ Implementar error boundaries
-- ✅ Añadir estados de carga
-- ✅ Tests básicos para funciones críticas
-
-### **Fase 2: Experiencia de Usuario (Semanas 3-4)**
-
-- ⚡ Dark mode / Light mode
-- ⚡ Responsive design
-- ⚡ Mejoras de accesibilidad
-- ✅ Internacionalización básica
-
-### **Fase 3: Rendimiento y Escalabilidad (Semanas 5-6)**n
-
-- ⚡ Virtualización de tablas
-- ⚡ Optimización de filtros
-- ⚡ Gestión de estado mejorada
-- ⚡ Web Workers para tareas pesadas
-
-### **Fase 4: Seguridad y Features Avanzadas (Semanas 7-8)**
-
-- ⚡ Encriptación de datos
-- ⚡ Sistema de plugins
-- ⚡ Features avanzadas de filtrado
-- ⚡ Mejoras en huella de carbono
+- [ ] **Alta manual de transacciones** — ahora mismo solo se pueden importar CSV; un gestor de finanzas necesita poder añadir un movimiento a mano (formulario simple con validación de fecha/importe).
+- [ ] **Edición de transacciones** — cierra el item de Fase 1 si se optó por implementarla; misma UI que el alta.
+- [ ] **No perder datos al recargar** — auto-guardar el estado en IndexedDB/localStorage y ofrecer restaurarlo al abrir (el guardado a fichero sigue siendo el export explícito). Sin esto, un refresh accidental pierde la sesión entera.
+- [ ] **Completar i18n**:
+  - Recomendaciones de la huella de carbono están hardcodeadas en español (`carbon-calculator.ts`) — moverlas al diccionario.
+  - `toLocaleDateString('es-ES', ...)` hardcodeado en `CarbonFootPrint.tsx` — usar el locale activo.
+  - Nombres de categoría: mostrarlos traducidos (depende de la decisión id-canónico de Fase 1).
+  - `<html lang>` dinámico según locale.
+- [ ] **Import CSV robusto para bancos españoles** — decimales con coma (`"12,50"` hoy se convierte en `12` con `parseFloat`) y aviso de filas inválidas en vez de fallar en silencio. PapaParse ya autodetecta `;` como separador.
 
 ---
 
-## **5. Métricas de Éxito**
+## Fase 4 — Pulido, pruebas y lanzamiento
 
-- **Rendimiento**: Tiempo de carga < 2s, filtrado < 500ms
-- **Usabilidad**: Accesibilidad AAA, soporte móvil completo
-- **Calidad**: Test coverage > 80%, 0 vulnerabilidades críticas
-- **Escalabilidad**: Manejo de 10,000+ transacciones sin degradación
+- [ ] **index.html / PWA mínima**:
+  - Quitar la referencia a `logo192.png` (no existe) o añadir iconos reales 192/512 al manifest.
+  - Añadir `<meta name="description">`.
+  - Etiquetas Open Graph (`og:title`, `og:description`, `og:image` + `twitter:card`) para que el enlace muestre una tarjeta correcta al compartirlo (WhatsApp, X…). Requiere una imagen estática en `public/`.
+- [ ] **Donativos** — crear `.github/FUNDING.yml` (activa el botón "Sponsor" en el repo; GitHub Sponsors y/o Ko-fi/Liberapay) y añadir un enlace discreto "Donar" en la UI (footer). Sin backend: el pago ocurre en la plataforma del tercero, la app sigue siendo 100 % client-side.
+- [ ] **Pasada rápida de responsive + accesibilidad** — probar en móvil (tabla y filtros son los críticos); labels/aria en botones de la tabla y el resolver de duplicados; foco visible.
+- [ ] **Tests de regresión de los bugs de Fase 1** + un test de integración del flujo completo (importar → detectar duplicados → resolver → filtrar). Añadir umbral de cobertura razonable al CI (p. ej. 60–70 %) usando `@vitest/coverage-v8` que ya está instalado.
+- [ ] **Verificar el fixture `data/transactions.msgpack`** — está commiteado en un repo público; confirmar que es 100 % sintético (no datos bancarios reales). Si no, sustituirlo y purgar historial.
+- [ ] **Smoke test manual del deploy** — tras el deploy a gh-pages: cargar la página con el base path `/fintracker/`, importar un CSV de prueba, guardar/cargar msgpack, cambiar idioma ES↔EN, probar las 4 pestañas.
+- [ ] **Release**: versión `1.0.0` en package.json, `CHANGELOG.md` (generar desde el historial git), actualizar README si cambió algo del flujo. Consolidar el deploy en una sola vía (workflow de CI; el script `npm run deploy` manual queda como respaldo).
+
+---
+
+## Criterios de lanzamiento (Definition of Done v1.0)
+
+1. CI completamente en verde: tests + typecheck + build + dependency-scan.
+2. 0 vulnerabilidades high/critical en dependencias de runtime.
+3. Todos los items de Fase 1 cerrados con test de regresión.
+4. Sin UI muerta (botones que no hacen nada) ni texto sin traducir en ES/EN.
+5. Smoke test manual del deploy en gh-pages superado.
+
+---
+
+## Backlog post-v1.0 (no bloquea el lanzamiento)
+
+Heredado del plan anterior, por orden aproximado de valor:
+
+- **Datos**: validación de esquemas con Zod; preview y mapeo de columnas al importar CSV; export a CSV/Excel/PDF; backup automático y versionado; encriptación opcional del fichero local.
+- **UX**: dark mode; filtros guardados; filtro por rango de importes y texto libre; drag & drop de ficheros; tooltips/ayuda contextual; categorías personalizables por el usuario.
+- **Rendimiento**: virtualización de la tabla para >5.000 movimientos; memoización de gráficos; Web Workers para filtrado pesado (solo si se detecta degradación real).
+- **Huella de carbono**: selector de región en la UI (el cálculo ya soporta regiones); base de factores de emisión actualizable; comparativas con promedios nacionales.
+- **SEO/difusión**: dominio propio (CNAME en GH Pages — sustituye la URL `github.io` y mejora marca/SEO); landing estática con contenido indexable (qué hace la app, capturas); sitemap.
+- **Plataforma**: PWA completa offline (service worker); E2E con Playwright; Storybook; backend ligero + Plaid (requiere repensar el modelo de privacidad: hoy todo es client-side).
+- **Estado**: migrar a Zustand/Redux solo si el Context actual se queda corto (hoy es suficiente).
