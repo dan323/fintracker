@@ -176,8 +176,15 @@ export const useFilteredTransactions = (transactions: Transaction[]) => {
                 }
             }
 
-            // Filter by account
-            if (filters.account && transaction.account !== filters.account) {
+            // Filter by account. The filter value comes from a free-text
+            // input, so match partially and case-insensitively instead of
+            // requiring the exact account name to be fully typed.
+            if (
+                filters.account &&
+                !transaction.account
+                    .toLowerCase()
+                    .includes(filters.account.toLowerCase())
+            ) {
                 return false;
             }
 
