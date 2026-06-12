@@ -1,61 +1,58 @@
-
-/* Tabs Section */
+/* Tabs: an underlined index sitting on the content card */
 .tabs {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    background-color: #f8f9fa;
-    padding: 0;
-    margin: 0;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    border-bottom: 2px solid #ddd;
-  }
-  
-  /* Tab Button Styling */
+  display: flex;
+  align-items: stretch;
+  background-color: var(--card);
+  border: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  border-radius: 12px 12px 0 0;
+  padding: 0;
+  margin: 0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.tab-button {
+  flex: 1;
+  padding: 14px 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: center;
+  color: var(--ink-soft);
+  background-color: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.tab-button:hover {
+  color: var(--ink);
+  background-color: var(--green-tint);
+}
+
+.tab-button.active {
+  color: var(--green);
+  border-bottom-color: var(--green);
+}
+
+.tab-button:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: -2px;
+}
+
+@media (max-width: 768px) {
   .tab-button {
-    flex: 1;
-    padding: 10px 20px;
-    font-size: 1rem;
-    font-weight: bold;
-    text-align: center;
-    color: #555;
-    background-color: #f8f9fa;
-    border: 1px solid #ddd;
-    border-bottom: none;
-    border-radius: 10px 10px 0 0; /* Rounded top corners */
-    cursor: pointer;
-    transition: all 0.3s ease;
+    font-size: 0.8rem;
+    padding: 10px 8px;
   }
-  
-  .tab-button:hover {
-    background-color: #e9ecef;
+}
+
+@media (max-width: 480px) {
+  .tab-button {
+    font-size: 0.72rem;
+    padding: 8px 6px;
   }
-  
-  .tab-button.active {
-    color: #007bff;
-    background-color: #ffffff;
-    border-color: #ddd;
-    border-bottom: 2px solid white; /* Seamless integration */
-    z-index: 2; /* Bring the active tab above others */
-  }
-  
-  .tab-button:focus {
-    outline: none;
-  }
-  
-  /* Tab Navigation Responsiveness */
-  @media (max-width: 768px) {
-    .tab-button {
-      font-size: 0.9rem;
-      padding: 8px 15px;
-    }
-  }
-  
-  @media (max-width: 480px) {
-    .tab-button {
-      font-size: 0.8rem;
-      padding: 5px 10px;
-    }
-  }
+}

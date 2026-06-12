@@ -1,75 +1,114 @@
-/* App.css */
+/* App.css — layout shell, header band, controls */
 
-/* General App Container */
 .app-container {
-  font-family: Arial, sans-serif;
-  max-width: 1200px;
+  max-width: 1180px;
   margin: 0 auto;
-  padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 24px 24px 56px;
 }
 
-/* Title */
+/* Header: banker's-green band carrying the wordmark and file actions */
+.app-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background-color: var(--green);
+  border-radius: 14px;
+  padding: 20px 28px;
+  margin-bottom: 24px;
+}
+
 .app-title {
-  text-align: center;
-  font-size: 2.5rem;
-  color: #333;
-  margin-bottom: 20px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.9rem;
+  letter-spacing: 0.01em;
+  color: #f6f5ec;
+  margin: 0;
 }
 
-/* Controls Section */
 .app-controls {
   display: flex;
-  justify-content: center;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 20px;
-  margin-bottom: 20px;
+  gap: 10px;
+}
+
+/* Buttons inside the green band are ghost-style */
+.app-header .action-button {
+  background-color: transparent;
+  border: 1px solid rgba(246, 245, 236, 0.45);
+  color: #f6f5ec;
+}
+
+.app-header .action-button:hover {
+  background-color: rgba(246, 245, 236, 0.14);
+  border-color: rgba(246, 245, 236, 0.7);
+}
+
+.app-header .action-button:active {
+  background-color: rgba(246, 245, 236, 0.22);
+}
+
+.app-header select {
+  background-color: transparent;
+  border-color: rgba(246, 245, 236, 0.45);
+  color: #f6f5ec;
+}
+
+.app-header select option {
+  color: var(--ink);
 }
 
 /* Buttons */
 .action-button {
-  padding: 10px 20px;
-  font-size: 1rem;
-  font-weight: bold;
-  border: none;
-  border-radius: 5px;
-  color: #fff;
-  background-color: #007bff;
+  display: inline-flex;
+  align-items: center;
+  padding: 9px 18px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  border: 1px solid var(--green);
+  border-radius: 8px;
+  color: #f6f5ec;
+  background-color: var(--green);
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .action-button:hover {
-  background-color: #0056b3;
+  background-color: var(--green-deep);
+  border-color: var(--green-deep);
 }
 
-.action-button:active {
-  background-color: #003f7f;
-}
-
-.action-button:disabled {
-  background-color: #999;
+.action-button:disabled,
+.action-button.disabled {
+  opacity: 0.55;
   cursor: not-allowed;
 }
 
+/* File-input label styled as a button: ring when the hidden input has focus */
+.file-button:focus-within {
+  outline: 2px solid #f6f5ec;
+  outline-offset: 2px;
+}
 
-/* Spacing Between Tabs and Content */
+/* Content card under the tabs */
 .tab-content {
-  margin-top: 20px; /* Adjust spacing between tabs and content */
-  padding: 50px; /* Optional: padding inside the content area */
-  background-color: #ffffff; /* Optional: separate content area background */
-  border: 1px solid #ddd; /* Optional: border around content area */
-  border-radius: 0 10px 10px 10px; /* Rounded bottom corners */
+  background-color: var(--card);
+  border: 1px solid var(--line);
+  border-top: none;
+  border-radius: 0 0 12px 12px;
+  padding: 28px;
 }
 
 .error-message {
-  background-color: #fee;
-  border: 1px solid #fcc;
-  color: #c66;
-  padding: 12px;
-  border-radius: 4px;
+  background-color: var(--debit-tint);
+  border: 1px solid var(--debit);
+  color: var(--debit);
+  padding: 12px 16px;
+  border-radius: 8px;
   margin-bottom: 16px;
   display: flex;
   justify-content: space-between;
@@ -81,34 +120,49 @@
   border: none;
   font-size: 18px;
   cursor: pointer;
-  color: #c66;
+  color: var(--debit);
 }
 
 .loading-spinner {
   text-align: center;
   padding: 20px;
-  color: #666;
+  color: var(--ink-soft);
 }
 
 .error-fallback {
   text-align: center;
   padding: 40px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  background-color: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
   margin: 20px;
 }
 
 .error-fallback button {
-  background-color: #007bff;
-  color: white;
+  background-color: var(--green);
+  color: #f6f5ec;
   border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
+  padding: 9px 18px;
+  border-radius: 8px;
+  font-weight: 600;
   cursor: pointer;
   margin-top: 16px;
 }
 
-.action-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+.error-fallback button:hover {
+  background-color: var(--green-deep);
+}
+
+@media (max-width: 600px) {
+  .app-container {
+    padding: 12px 12px 40px;
+  }
+
+  .app-header {
+    padding: 16px 18px;
+  }
+
+  .tab-content {
+    padding: 16px;
+  }
 }

@@ -6,6 +6,7 @@
   "categories.other": "Other",
   "action.upload": "Upload transactions",
   "action.save": "Save transactions",
+  "action.import": "Import CSV",
   "loading": "Loading...",
   "loading.thinking": "Thinking...",
   "error.load": "Error loading file",

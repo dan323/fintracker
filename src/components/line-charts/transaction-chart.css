@@ -1,15 +1,12 @@
 .carbon-footprint-container {
-  padding: 20px;
-  background: #f8fffe;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 4px 0 0;
 }
 
 .chart-controls {
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Ensures vertical alignment of label and toggle */
-    justify-content: center; /* Centers the elements horizontally */
-    margin-bottom: 20px;
-    gap: 10px; /* Adds some space between the label and the toggle */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  gap: 10px;
 }

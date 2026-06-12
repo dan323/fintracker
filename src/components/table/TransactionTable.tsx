@@ -93,7 +93,7 @@ const TransactionTable: React.FC<Props> = ({ transactions, onEdit, onDelete }) =
           <tr key="header-row">
             <th>{t('table.date')}</th>
             <th>{t('table.description')}</th>
-            <th>{t('table.amount')}</th>
+            <th className="amount">{t('table.amount')}</th>
             <th>{t('table.category')}</th>
             <th>{t('table.account')}</th>
             <th>{t('table.actions')}</th>
@@ -159,9 +159,11 @@ const TransactionTable: React.FC<Props> = ({ transactions, onEdit, onDelete }) =
               </tr>
             ) : (
               <tr key={tx.id}>
-                <td>{`${tx.date.toISOString().slice(0, 10)}`}</td>
+                <td className="date">{`${tx.date.toISOString().slice(0, 10)}`}</td>
                 <td>{tx.description}</td>
-                <td>{tx.amount.toFixed(2)}</td>
+                <td className={`amount ${tx.amount < 0 ? "debit" : "credit"}`}>
+                  {tx.amount.toFixed(2)}
+                </td>
                 <td>{tx.category}</td>
                 <td>{tx.account}</td>
                 <td>

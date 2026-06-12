@@ -1,45 +1,49 @@
-
-
+/* Toggle chips: inactive states are quiet outlines, the active one is inked */
 .toggle-switch {
-    min-width: 180px; /* Ensure it fits "Categorías" */
-    height: 35px;
-    border-radius: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 14px;
-    text-transform: uppercase;
-    transition: background-color 0.3s ease;
-    padding: 0 15px;
-    box-sizing: border-box;
+  min-width: 0;
+  padding: 6px 16px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background-color: var(--card);
+  color: var(--ink-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  box-sizing: border-box;
+  transition: color 0.2s ease, border-color 0.2s ease,
+    background-color 0.2s ease;
 }
 
-.toggle-switch.on {
-    background-color: #0055b1; /* Blue for "on" */
-    color: white;
+.toggle-switch:hover {
+  color: var(--green);
+  border-color: var(--green);
 }
 
-.toggle-switch.off {
-    background-color: #7ce19a; /* Grey for "off" */
-    color: black;
+/* The active chip sits inside .toggle-span */
+.toggle-span .toggle-switch {
+  background-color: var(--green);
+  border-color: var(--green);
+  color: #f6f5ec;
+  cursor: default;
 }
 
 .toggle-text {
-    text-align: center;
-    pointer-events: none;
-    white-space: nowrap; /* Prevent wrapping */
-    overflow: visible; /* Ensure text is fully visible */
-    text-overflow: unset; /* Remove ellipsis */
+  text-align: center;
+  pointer-events: none;
+  white-space: nowrap;
 }
 
-/* Styles for the span element */
 .toggle-span {
-    flex-direction: row;
-    display: flex;
-    font-size: 1.5rem; /* Adjusts the font size to be larger */
-    font-weight: bold; /* Makes the font bold */
-    margin-top: 10px; /* Adds spacing between the toggle switches and the span */
-    text-align: center; /* Optional: Centers the text */
-  }
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  text-align: center;
+}

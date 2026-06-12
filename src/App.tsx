@@ -105,23 +105,25 @@ const App: React.FC = () => {
     <ErrorBoundary>
     <BrowserRouter basename={import.meta.env.BASE_URL || '/'}>
       <div className="app-container">
-        <h1 className="app-title">{t('app.title')}</h1>
+        <header className="app-header">
+          <h1 className="app-title">{t('app.title')}</h1>
+          <div className="app-controls">
+            <button className="action-button" onClick={loadTransactions}>
+              {isLoading ? t('loading.thinking') : t('action.upload')}
+            </button>
+            <button className="action-button" onClick={() => saveTransactions()}>
+              {isLoading ? t('loading.thinking') : t('action.save')}
+            </button>
+            <CsvUploader onUpload={handleUpload} disabled={isLoading} />
+            <LanguageSwitcher />
+          </div>
+        </header>
         {error && (
             <div className="error-message">
               {error}
               <button onClick={() => setError(null)}>×</button>
             </div>
           )}
-        <div className="app-controls">
-          <button className="action-button" onClick={loadTransactions}>
-            {isLoading ? t('loading.thinking') : t('action.upload')}
-          </button>
-          <button className="action-button" onClick={() => saveTransactions()}>
-            {isLoading ? t('loading.thinking') : t('action.save')}
-          </button>
-          <CsvUploader onUpload={handleUpload} disabled={isLoading} />
-          <LanguageSwitcher />
-        </div>
           {isLoading && <div className="loading-spinner">{t('loading')}</div>}
         <Filtering />
         <TabSelector activeTab={activeTab} setActiveTab={setActiveTab} />
