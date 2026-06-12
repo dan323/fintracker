@@ -1,9 +1,11 @@
 .toggle-switch.on {
-    background-color: #0055b1; /* Blue for "on" */
-    color: white;
+  background-color: var(--green);
+  border-color: var(--green);
+  color: #f6f5ec;
 }
 
 .toggle-switch.off {
-    background-color: #7ce19a; /* Grey for "off" */
-    color: black;
+  background-color: var(--card);
+  border-color: var(--line);
+  color: var(--ink-soft);
 }

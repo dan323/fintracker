@@ -6,6 +6,7 @@
   "categories.other": "Otros",
   "action.upload": "Subir movimientos",
   "action.save": "Guardar movimientos",
+  "action.import": "Importar CSV",
   "loading": "Cargando...",
   "loading.thinking": "Pensando...",
   "error.load": "Error al cargar el archivo",

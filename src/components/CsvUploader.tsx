@@ -80,7 +80,18 @@ const CsvUploader: React.FC<Props> = ({ onUpload, disabled = false }) => {
         }
     };
 
-    return <input type="file" accept=".csv" onChange={handleFileChange} disabled={disabled} />;
+    return (
+        <label className={`action-button file-button${disabled ? " disabled" : ""}`}>
+            {t('action.import')}
+            <input
+                className="visually-hidden"
+                type="file"
+                accept=".csv"
+                onChange={handleFileChange}
+                disabled={disabled}
+            />
+        </label>
+    );
 };
 
 export default CsvUploader;
