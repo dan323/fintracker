@@ -1,1 +1,0 @@
-import"./rolldown-runtime-QTnfLwEv.js";import{n as e,t}from"./vendor_react-BiFnIx7H.js";import{t as n}from"./index-DyncCrRq.js";e();var r=t(),i=({className:e,textOn:t,textOff:i,onToggle:a,label:o})=>{let s=new Map;return s.set(`on`,t),s.set(`off`,i),(0,r.jsx)(n,{onToggle:e=>a(e===`on`),className:e,label:o,states:[`on`,`off`],stateTexts:s})};export{i as t};
