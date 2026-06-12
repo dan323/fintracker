@@ -9,7 +9,7 @@ const TransactionChart = React.lazy(() => import("./components/bar-charts/Transa
 const CarbonFootPrint = React.lazy(() => import("./components/line-charts/CarbonFootPrint"));
 import { Transaction } from "./models/transaction";
 import { findDuplicates, isDuplicateOf } from "./utils/deduplicate";
-import { loadFile, saveFile, useFilteredTransactions } from "./utils/transaction";
+import { isFilePickerCancel, loadFile, saveFile, useFilteredTransactions } from "./utils/transaction";
 import "./App.css";
 import TabSelector from "./components/TabSelector";
 import { BrowserRouter } from "react-router-dom";
@@ -34,8 +34,10 @@ const App: React.FC = () => {
       console.log("Opening file...");
       await loadFile().then(setTransactions);
     } catch (error) {
-      console.log("No file selected or error loading file:", error);
-      setError(t('error.load'));
+      if (!isFilePickerCancel(error)) {
+        console.log("Error loading file:", error);
+        setError(t('error.load'));
+      }
     } finally {
       setIsLoading(false);
     }
@@ -48,8 +50,10 @@ const App: React.FC = () => {
       setError(null);
       await saveFile(transactionsToSave);
     } catch (error) {
-      console.log("Error saving file:", error);
-      setError(t('error.save'));
+      if (!isFilePickerCancel(error)) {
+        console.log("Error saving file:", error);
+        setError(t('error.save'));
+      }
     } finally {
       setIsLoading(false);
     }

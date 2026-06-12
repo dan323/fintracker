@@ -29,6 +29,18 @@ export const normalizeTransactions = (transactions: any[]): Transaction[] => {
     return transactions.map(normalizeTransaction);
 };
 
+// The File System Access pickers reject with a DOMException named
+// "AbortError" when the user dismisses the dialog; the legacy <input
+// type="file"> fallback rejects with Error("No file selected."). Both are
+// normal cancellations, not failures. DOMException is checked defensively
+// since it does not exist outside DOM environments.
+export const isFilePickerCancel = (err: unknown): boolean =>
+    (typeof DOMException !== "undefined" &&
+        err instanceof DOMException &&
+        err.name === "AbortError") ||
+    (err instanceof Error &&
+        (err.name === "AbortError" || err.message === "No file selected."));
+
 export async function saveFile(transactions: any[]) {
     if ("showSaveFilePicker" in window) {
         try {
@@ -45,7 +57,9 @@ export async function saveFile(transactions: any[]) {
             // Save using File System Access API
             saveTransactionsToFile(transactions, fileHandle);
         } catch (err) {
-            console.error("Error saving file:", err);
+            if (!isFilePickerCancel(err)) {
+                console.error("Error saving file:", err);
+            }
             throw err; // Re-throw for proper error handling
         }
     } else {
@@ -113,7 +127,9 @@ export async function loadFile(): Promise<Transaction[]> {
             });
         }
     } catch (error) {
-        console.error("Error loading file:", error);
+        if (!isFilePickerCancel(error)) {
+            console.error("Error loading file:", error);
+        }
         throw error; // Re-throw for proper error handling
     }
 }
