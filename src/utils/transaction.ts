@@ -135,6 +135,17 @@ export async function loadFile(): Promise<Transaction[]> {
 }
 
 /**
+ * Normalizes free text for comparison: trims, lowercases and strips
+ * diacritics so e.g. "nomina" matches "Nómina".
+ */
+const normalizeForSearch = (text: string): string =>
+    text
+        .trim()
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[̀-ͯ]/g, "");
+
+/**
  * Helper function to check if a category matches or belongs to any of the provided categories or their subcategories.
  */
 const isCategoryMatch = (
@@ -192,8 +203,17 @@ export const useFilteredTransactions = (transactions: Transaction[]) => {
                 }
             }
 
-            // Filter by account
-            if (filters.account && transaction.account !== filters.account) {
+            // Filter by account. The filter value comes from a free-text
+            // input, so match partially, case- and accent-insensitively
+            // instead of requiring the exact account name to be fully typed.
+            // Whitespace-only input is treated as no filter.
+            const accountFilter = filters.account
+                ? normalizeForSearch(filters.account)
+                : "";
+            if (
+                accountFilter &&
+                !normalizeForSearch(transaction.account).includes(accountFilter)
+            ) {
                 return false;
             }
 
