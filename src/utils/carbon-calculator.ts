@@ -1,6 +1,6 @@
 import { Transaction } from "../models/transaction";
-import { findCategoryByName, subCategories } from "./categories";
-import { categories, FlatCategory, getRegionalAdjustment } from "../models/categories";
+import { subCategories, toCategory } from "./categories";
+import { FlatCategory, getRegionalAdjustment } from "../models/categories";
 
 export interface CarbonBreakdown {
   category: string;
@@ -24,7 +24,7 @@ export class CarbonCalculator {
     // Only calculate emissions for expenses
     if (transaction.amount >= 0) return 0;
     
-    const category = findCategoryByName(transaction.category) || categories["miscellaneous-others"];
+    const category = toCategory(transaction.category);
     const baseEmission = this.calculateCategoryEmission(category, Math.abs(transaction.amount));
     
     // Apply regional adjustment
@@ -70,7 +70,7 @@ export class CarbonCalculator {
       const emission = this.calculateTransactionEmission(tx);
       totalEmissions += emission;
       
-      const category = findCategoryByName(tx.category)?.name || 'Others';
+      const category = toCategory(tx.category).name;
       categoryEmissions.set(category, (categoryEmissions.get(category) || 0) + emission);
     });
 

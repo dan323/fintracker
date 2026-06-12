@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { Transaction } from "../models/transaction";
 import { categories } from "../models/categories";
+import { toCategoryId } from "./categories";
 import { saveTransactionsToFile, loadTransactionsFromFile, saveTransactionsFallback, msgpackTransformer, jsonTransformer } from "./message-pack";
 import { useFilters } from "../context/FilterContext";
 
@@ -152,14 +153,17 @@ const isCategoryMatch = (
     transactionCategory: string,
     filterCategories: string[]
 ): boolean => {
-    // Iterate over the list of categories and check if the transactionCategory matches any category or its subcategories
+    // The filter emits canonical category ids, but the transaction may still
+    // carry legacy free text (old saved files); resolve it to an id first.
+    const categoryId = toCategoryId(transactionCategory);
     return filterCategories.some((filterCategory) =>
-        matchCategory(transactionCategory, filterCategory)
+        matchCategory(categoryId, filterCategory)
     );
 };
 
 /**
- * Helper function to recursively check if a category matches or belongs to its subcategories.
+ * Helper function to recursively check if a category id matches the given
+ * category id or any of its ancestors.
  */
 const matchCategory = (
     transactionCategory: string,
@@ -168,15 +172,10 @@ const matchCategory = (
     if (transactionCategory === category) {
         return true;
     }
-    if (!categories[transactionCategory]) {
-        return category === 'Others';
-    }
-
-    if (categories[transactionCategory].parentId) {
+    if (categories[transactionCategory]?.parentId) {
         return matchCategory(categories[transactionCategory].parentId, category);
-    } else {
-        return false;
     }
+    return false;
 };
 
 export const useFilteredTransactions = (transactions: Transaction[]) => {

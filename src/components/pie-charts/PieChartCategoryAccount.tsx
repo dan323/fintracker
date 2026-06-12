@@ -5,7 +5,7 @@ import Toggle from "../toggle-switch/Toggle";
 import "./pie-charts.css";
 import { getColorForTransaction } from "../../utils/color";
 import { Props } from "recharts/types/component/DefaultLegendContent";
-import { findCategoryByName, isUnderCategory, parentCategory, subCategories } from "../../utils/categories";
+import { findCategoryByName, isUnderCategory, parentCategory, subCategories, toCategory } from "../../utils/categories";
 import { useTranslation } from '../../i18n';
 
 interface AnalyticsProps {
@@ -50,16 +50,18 @@ const PieChartCategoryAccount: React.FC<AnalyticsProps> = ({ transactions }: Ana
         if (!selectedCategory) {
             return transactions;
         }
-        return transactions.filter((tx) => isUnderCategory(findCategoryByName(tx.category), findCategoryByName(selectedCategory)));
+        return transactions.filter((tx) => isUnderCategory(toCategory(tx.category), findCategoryByName(selectedCategory)));
     }, [transactions, selectedCategory]);
 
     // Aggregate data (separately for income and expenses)
     const aggregatedData = useMemo(() => {
         return filteredTransactions.reduce<{ [key: string]: { pos: number; neg: number } }>((acc, tx) => {
+            // Transactions store category ids; resolve once for display.
+            const txCategory = toCategory(tx.category);
             const key = showByCategory
                 ? selectedCategory
-                    ? tx.category // Show subcategories if a category is selected
-                    : parentCategory(findCategoryByName(tx.category)).name // Show main categories otherwise
+                    ? txCategory.name // Show subcategories if a category is selected
+                    : parentCategory(txCategory).name // Show main categories otherwise
                 : tx.account;
 
             if (!key) return acc;
@@ -68,7 +70,7 @@ const PieChartCategoryAccount: React.FC<AnalyticsProps> = ({ transactions }: Ana
                 acc[key] = { pos: 0, neg: 0 };
             }
 
-            if (tx.category !== t('categories.internal')) {
+            if (txCategory.id !== 'miscellaneous-internal') {
                 if (tx.amount > 0) {
                     acc[key].pos += tx.amount; // Income
                 } else {

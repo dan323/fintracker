@@ -105,5 +105,35 @@ describe('useFilteredTransactions', () => {
     const { getByTestId } = render(<TestHookComponent transactions={transactions} />);
     expect(getByTestId('count').textContent).toBe('1');
   });
+
+  // Regression: transactions from old files may carry category *names*
+  // ("Groceries") instead of canonical ids; the filter emits ids and must
+  // still match them (bug "filtrar por categoría no funciona").
+  it('filters by category id when the transaction carries a legacy name', () => {
+    const transactions = [
+      { id: 't1', date: new Date('2023-01-05'), description: '', amount: -1, category: 'Groceries', account: 'a' },
+      { id: 't2', date: new Date('2023-01-06'), description: '', amount: -2, category: 'Clothing', account: 'a' }
+    ];
+
+    vi.spyOn(FilterContext, 'useFilters').mockReturnValue({ filters: { categories: ['food-and-dining'] } } as any);
+
+    const { getByTestId } = render(<TestHookComponent transactions={transactions} />);
+    expect(getByTestId('count').textContent).toBe('1');
+  });
+
+  it('matches unknown categories only under miscellaneous', () => {
+    const transactions = [
+      { id: 't1', date: new Date('2023-01-05'), description: '', amount: -1, category: 'free text nonsense', account: 'a' },
+    ];
+
+    vi.spyOn(FilterContext, 'useFilters').mockReturnValue({ filters: { categories: ['miscellaneous'] } } as any);
+    const misc = render(<TestHookComponent transactions={transactions} />);
+    expect(misc.getByTestId('count').textContent).toBe('1');
+    misc.unmount();
+
+    vi.spyOn(FilterContext, 'useFilters').mockReturnValue({ filters: { categories: ['food-and-dining'] } } as any);
+    const food = render(<TestHookComponent transactions={transactions} />);
+    expect(food.getByTestId('count').textContent).toBe('0');
+  });
 });
 

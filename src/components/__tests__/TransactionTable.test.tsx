@@ -18,7 +18,7 @@ describe('TransactionTable', () => {
       date: new Date('2023-02-02'),
       description: 'Coffee',
       amount: -3.5,
-      category: 'food',
+      category: 'food-and-dining',
       account: 'card',
     };
 

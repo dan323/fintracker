@@ -37,5 +37,21 @@ describe('CarbonCalculator', () => {
     expect(analysis.monthlyAverage).toBeGreaterThan(0);
     expect(analysis.region).toBe('EU');
   });
+
+  // Regression: emissions used to be looked up by category *name*, so
+  // transactions categorized with canonical ids silently fell back to the
+  // generic "Others" factor instead of the category's real one.
+  it('applies the category emission factor when the category is an id', () => {
+    const tx: Transaction = {
+      id: 't1',
+      date: new Date('2023-01-01'),
+      description: 'Meat',
+      amount: -100,
+      category: 'food-and-dining-groceries-meat-products', // factor 3.2
+      account: 'card',
+    };
+
+    expect(CarbonCalculator.calculateTransactionEmission(tx, 'EU')).toBeCloseTo(320);
+  });
 });
 

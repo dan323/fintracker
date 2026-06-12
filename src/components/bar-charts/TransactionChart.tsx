@@ -12,6 +12,7 @@ import {
 import Toggle from "../toggle-switch/Toggle";
 import './transaction-chart.css'
 import { Transaction } from "../../models/transaction";
+import { toCategoryId } from "../../utils/categories";
 import { useTranslation } from '../../i18n';
 
 interface Props {
@@ -50,8 +51,8 @@ const TransactionChart: React.FC<Props> = ({ transactions }: Props) => {
                 acc[monthKey] = { month: monthLabel, revenue: 0, expenditure: 0 };
             }
 
-            // Do not show internal movements
-            if (tx.category !== t('categories.internal')){
+            // Do not show internal movements (categories are stored as ids)
+            if (toCategoryId(tx.category) !== 'miscellaneous-internal'){
                 if (tx.amount > 0) {
                     acc[monthKey].revenue += tx.amount;
                 } else {

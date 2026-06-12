@@ -1,6 +1,7 @@
 import React from "react";
 import Papa from "papaparse";
 import { Transaction } from "../models/transaction";
+import { toCategoryId } from "../utils/categories";
 import { useTranslation } from "../i18n";
 
 const parseDate = (dateString: string): Date => {
@@ -71,7 +72,9 @@ const CsvUploader: React.FC<Props> = ({ onUpload, disabled = false }) => {
                         date: row.date,
                         description: row.description || "",
                         amount: row.amount,
-                        category: row.category || t('categories.other'),
+                        // Transactions always store the canonical category id;
+                        // CSV files carry free-text names, so map them here.
+                        category: toCategoryId(row.category),
                         account: row.account || t('account.unknown'),
                     }));
                     onUpload(transactions.map(normalizeTransaction));
