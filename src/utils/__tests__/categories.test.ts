@@ -17,6 +17,11 @@ describe('toCategoryId', () => {
     expect(toCategoryId('DINING OUT')).toBe('food-and-dining-dining-out');
   });
 
+  it('matches names ignoring diacritics', () => {
+    expect(toCategoryId('Grocéries')).toBe('food-and-dining-groceries');
+    expect(toCategoryId('tránsport')).toBe('transport');
+  });
+
   it('falls back to miscellaneous-others for unknown or empty input', () => {
     expect(toCategoryId('not a category')).toBe(FALLBACK_CATEGORY_ID);
     expect(toCategoryId('')).toBe(FALLBACK_CATEGORY_ID);

@@ -27,6 +27,13 @@ export const FALLBACK_CATEGORY_ID = 'miscellaneous-others';
 const normalizeForLookup = (text: string): string =>
     text.trim().toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
 
+const categoryIdByNormalizedKey: Record<string, string> = Object.values(categories)
+    .reduce((acc, c) => {
+        acc[c.id] = c.id;
+        acc[normalizeForLookup(c.name)] = c.id;
+        return acc;
+    }, {} as Record<string, string>);
+
 /**
  * Resolves arbitrary category input (canonical id, display name, or legacy
  * free text from CSV imports / old saved files) to a canonical category id.
@@ -35,11 +42,7 @@ const normalizeForLookup = (text: string): string =>
 export const toCategoryId = (input: string | undefined | null): string => {
     if (!input) return FALLBACK_CATEGORY_ID;
     if (categories[input]) return input;
-    const needle = normalizeForLookup(input);
-    const match = Object.values(categories).find(
-        (c) => c.id === needle || normalizeForLookup(c.name) === needle
-    );
-    return match ? match.id : FALLBACK_CATEGORY_ID;
+    return categoryIdByNormalizedKey[normalizeForLookup(input)] ?? FALLBACK_CATEGORY_ID;
 }
 
 /** Display name for a transaction category (id or legacy free text). */
