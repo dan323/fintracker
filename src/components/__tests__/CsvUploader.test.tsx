@@ -16,7 +16,11 @@ describe('CsvUploader', () => {
 
     // Mock Papa.parse to call complete callback
     vi.spyOn(Papa, 'parse').mockImplementation((file: any, opts: any) => {
-      const results = { data: [{ amount: '12.34', date: '2023-01-02', description: 'x', category: 'c', account: 'a' }] };
+      const results = { data: [
+        { amount: '12.34', date: '2023-01-02', description: 'x', category: 'Groceries', account: 'a' },
+        { amount: '-5', date: '2023-01-03', description: 'y', category: 'something unknown', account: 'a' },
+        { amount: '-7', date: '2023-01-04', description: 'z', category: '', account: 'a' },
+      ] };
       if (opts && typeof opts.complete === 'function') opts.complete(results);
       return {} as any;
     });
@@ -34,6 +38,12 @@ describe('CsvUploader', () => {
     expect(Array.isArray(uploaded)).toBe(true);
     expect(uploaded[0].amount).toBeCloseTo(12.34);
     expect(uploaded[0].date instanceof Date).toBe(true);
+
+    // Categories are stored as canonical ids: names from the CSV are
+    // mapped to their id, unknown or missing values fall back to others.
+    expect(uploaded[0].category).toBe('food-and-dining-groceries');
+    expect(uploaded[1].category).toBe('miscellaneous-others');
+    expect(uploaded[2].category).toBe('miscellaneous-others');
   });
 });
 

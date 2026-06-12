@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import "./transaction-table.css";
 import { Transaction } from "../../models/transaction";
+import { categories } from "../../models/categories";
+import { categoryName, toCategoryId } from "../../utils/categories";
 import ToggleMultiple from "../toggle-switch/ToggleMultiple";
 import { useTranslation } from '../../i18n';
 
@@ -22,9 +24,16 @@ const toDraft = (tx: Transaction): Draft => ({
   date: tx.date.toISOString().slice(0, 10),
   description: tx.description,
   amount: String(tx.amount),
-  category: tx.category,
+  // Drafts always hold the canonical id, even if the stored transaction
+  // carries legacy free text; saving the edit normalizes it.
+  category: toCategoryId(tx.category),
   account: tx.account,
 });
+
+const categoryDepth = (id: string): number => {
+  const parentId = categories[id]?.parentId;
+  return parentId ? 1 + categoryDepth(parentId) : 0;
+};
 
 const isDraftValid = (draft: Draft): boolean =>
   !Number.isNaN(parseFloat(draft.amount)) &&
@@ -129,12 +138,17 @@ const TransactionTable: React.FC<Props> = ({ transactions, onEdit, onDelete }) =
                   />
                 </td>
                 <td>
-                  <input
-                    type="text"
+                  <select
                     aria-label={t('table.category')}
                     value={draft.category}
                     onChange={(e) => updateDraft('category', e.target.value)}
-                  />
+                  >
+                    {Object.values(categories).map((cat) => (
+                      <option key={cat.id} value={cat.id}>
+                        {"-".repeat(categoryDepth(cat.id)) + cat.name}
+                      </option>
+                    ))}
+                  </select>
                 </td>
                 <td>
                   <input
@@ -164,7 +178,7 @@ const TransactionTable: React.FC<Props> = ({ transactions, onEdit, onDelete }) =
                 <td className={`amount ${tx.amount < 0 ? "debit" : "credit"}`}>
                   {tx.amount.toFixed(2)}
                 </td>
-                <td>{tx.category}</td>
+                <td>{categoryName(tx.category)}</td>
                 <td>{tx.account}</td>
                 <td>
                   <button className="edit-btn" onClick={() => startEditing(tx)}>

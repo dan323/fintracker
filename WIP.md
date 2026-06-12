@@ -11,7 +11,7 @@
 Verificado ejecutando build, tests y audit en local:
 
 - ✅ Build de producción funciona (`npm run build`, Vite, chunks vendor separados, charts lazy-loaded)
-- ✅ 48 tests pasan (16 ficheros, Vitest + Testing Library)
+- ✅ 57 tests pasan (17 ficheros, Vitest + Testing Library)
 - ✅ Import CSV (PapaParse), carga/guardado JSON + MessagePack con File System Access API y fallbacks
 - ✅ Detección de duplicados + UI de resolución (bugs de Fase 1 corregidos)
 - ✅ Filtros: categorías jerárquicas, cuenta (coincidencia parcial, sin acentos), rango de fechas
@@ -20,7 +20,7 @@ Verificado ejecutando build, tests y audit en local:
 - ✅ ErrorBoundary, estados de carga, CI con deploy automático a gh-pages
 - ✅ `npm audit`: 0 vulnerabilidades (dependencias actualizadas, lock regenerado)
 - ❌ `tsc --noEmit` falla (`@types/react-router-dom` v5 obsoleto junto a router v7, tsconfig incompleto). El CI no hace typecheck.
-- ❌ Pendiente de Fase 1: modelo de categorías inconsistente (ids vs nombres)
+- ✅ Fase 1 completa: modelo de categorías unificado sobre ids canónicos (filtro por categoría funciona)
 
 ---
 
@@ -33,10 +33,14 @@ Cada fix debe llevar su test de regresión.
 - [x] **Botón "Editar" no funciona** — corregido (PR #17): edición inline en la tabla, preservando timestamps y con estilo propio para cancelar; con tests.
 - [x] **Cancelar el selector de ficheros muestra error** — corregido (PR #14): el `AbortError`/cancelación del file picker ya no muestra el banner de error; con test de regresión.
 - [x] **`$` literal visible en los fallbacks de Suspense** — corregido (PR #15): eliminado el `$` en los 3 fallbacks; con test de regresión.
-- [ ] **Modelo de categorías inconsistente (ids vs nombres)** — decisión arquitectónica pendiente y bug real:
-  - El filtro (`Filtering.tsx`) guarda **ids** (`food-and-dining-groceries`), la calculadora de carbono (`carbon-calculator.ts`) busca por **nombre** (`findCategoryByName`), y el CSV importa **texto libre**. Cada camino funciona con datos distintos; no pueden funcionar todos a la vez.
-  - Propuesta: `Transaction.category` siempre contiene el **id** canónico. El import CSV mapea nombre→id (con fallback a `miscellaneous-others`). La tabla y los gráficos traducen id→nombre localizado al renderizar.
-  - Ajustar `useFilteredTransactions`, `CarbonCalculator`, `TransactionTable` y los tests.
+- [x] **Modelo de categorías inconsistente (ids vs nombres)** — corregido (2026-06-12), implementando la propuesta del id canónico:
+  - `Transaction.category` contiene siempre el **id** canónico. Nuevo helper `toCategoryId()` en `src/utils/categories.ts` que resuelve cualquier entrada (id, nombre, texto libre legacy; sin acentos, case-insensitive) a un id, con fallback a `miscellaneous-others`; y `categoryName()` para mostrar.
+  - Import CSV (`CsvUploader.tsx`): mapea nombre→id con `toCategoryId` (eliminado el fallback traducido `t('categories.other')`).
+  - Filtro (`useFilteredTransactions`): normaliza la categoría de la transacción a id antes de comparar y sube por `parentId`; eliminado el literal `'Others'` que dejaba la lista vacía.
+  - Calculadora de carbono: busca por id (antes `findCategoryByName` hacía que las transacciones con id cayeran al factor genérico 0.5 de "Others").
+  - Tabla: muestra el nombre (`categoryName`) y la edición inline usa un desplegable de categorías canónicas en vez de texto libre; al guardar se normaliza el id.
+  - Gráficos (pie y barras): resuelven por id; los movimientos internos se detectan por id `miscellaneous-internal` en vez del nombre traducido. `getColorForTransaction` resuelve por id.
+  - Tests de regresión: mapeo CSV nombre/desconocido/vacío→id, filtro con nombres legacy, fallback a `miscellaneous-others` (y que no coincide con otras categorías), factor de emisión correcto por id, y unit tests de `toCategoryId`/`categoryName`.
 - [x] **Filtro de cuenta con coincidencia exacta sobre input libre** — corregido (PR #16): coincidencia parcial case-insensitive, sin acentos y con trim del input; con tests de regresión.
 
 ---

@@ -41,13 +41,15 @@ describe('useFilteredTransactions extra cases', () => {
     expect(getByTestId('count').textContent).toBe('1');
   });
 
-  it("matches transactions with unknown category when filtering for 'Others'", () => {
+  it("matches transactions with unknown category when filtering for the others id", () => {
     const transactions = [
       { id: 't1', date: new Date('2023-01-01'), description: '', amount: -1, category: 'non-existent-cat', account: 'a' },
       { id: 't2', date: new Date('2023-01-02'), description: '', amount: -2, category: 'shopping-clothing', account: 'a' }
     ];
 
-    vi.spyOn(FilterContext, 'useFilters').mockReturnValue({ filters: { categories: ['Others'] } } as any);
+    // The category select emits canonical ids; unknown transaction
+    // categories fall back to miscellaneous-others and must match it.
+    vi.spyOn(FilterContext, 'useFilters').mockReturnValue({ filters: { categories: ['miscellaneous-others'] } } as any);
 
     const { getByTestId } = render(<TestHookComponent transactions={transactions} />);
     expect(getByTestId('count').textContent).toBe('1');
