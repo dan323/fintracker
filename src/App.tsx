@@ -42,11 +42,11 @@ const App: React.FC = () => {
   };
 
   // Save transactions to a local msgpack file
-  const saveTransactions = async () => {
+  const saveTransactions = async (transactionsToSave: Transaction[] = transactions) => {
     try {
       setIsLoading(true);
       setError(null);
-      await saveFile(transactions);
+      await saveFile(transactionsToSave);
     } catch (error) {
       console.log("Error saving file:", error);
       setError(t('error.save'));
@@ -63,8 +63,11 @@ const App: React.FC = () => {
       (tx) => !detectedDuplicates.some((dup) => dup.id === tx.id)
     );
 
-    setTransactions((prev) => [...prev, ...nonDuplicates]);
-    saveTransactions();
+    // setTransactions is async: build the updated list explicitly so the
+    // auto-save below persists the newly imported transactions too.
+    const updatedTransactions = [...transactions, ...nonDuplicates];
+    setTransactions(updatedTransactions);
+    saveTransactions(updatedTransactions);
   };
 
   const handleResolveDuplicate = (
@@ -97,7 +100,7 @@ const App: React.FC = () => {
           <button className="action-button" onClick={loadTransactions}>
             {isLoading ? t('loading.thinking') : t('action.upload')}
           </button>
-          <button className="action-button" onClick={saveTransactions}>
+          <button className="action-button" onClick={() => saveTransactions()}>
             {isLoading ? t('loading.thinking') : t('action.save')}
           </button>
           <CsvUploader onUpload={handleUpload} disabled={isLoading} />
