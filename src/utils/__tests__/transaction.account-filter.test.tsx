@@ -43,4 +43,19 @@ describe('account filter (free-text input)', () => {
     const { getByTestId } = renderWithAccountFilter('inexistente');
     expect(getByTestId('accounts').textContent).toBe('');
   });
+
+  it('matches accent-insensitively', () => {
+    const { getByTestId } = renderWithAccountFilter('nomina');
+    expect(getByTestId('accounts').textContent).toBe('Cuenta Nómina');
+  });
+
+  it('treats whitespace-only input as no filter', () => {
+    const { getByTestId } = renderWithAccountFilter('   ');
+    expect(getByTestId('accounts').textContent).toBe('Cuenta Nómina,Cuenta Ahorro,Tarjeta');
+  });
+
+  it('ignores surrounding whitespace in the filter', () => {
+    const { getByTestId } = renderWithAccountFilter('  tarjeta  ');
+    expect(getByTestId('accounts').textContent).toBe('Tarjeta');
+  });
 });
