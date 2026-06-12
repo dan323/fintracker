@@ -9,7 +9,7 @@ const TransactionChart = React.lazy(() => import("./components/bar-charts/Transa
 const CarbonFootPrint = React.lazy(() => import("./components/line-charts/CarbonFootPrint"));
 import { Transaction } from "./models/transaction";
 import { findDuplicates } from "./utils/deduplicate";
-import { loadFile, saveFile, useFilteredTransactions } from "./utils/transaction";
+import { isFilePickerCancel, loadFile, saveFile, useFilteredTransactions } from "./utils/transaction";
 import "./App.css";
 import TabSelector from "./components/TabSelector";
 import { BrowserRouter } from "react-router-dom";
@@ -25,12 +25,6 @@ const App: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const filteredTransactions = useFilteredTransactions(transactions);
-
-  // The File System Access pickers reject with a DOMException named
-  // "AbortError" when the user dismisses the dialog. That is a normal
-  // cancellation, not a failure.
-  const isFilePickerCancel = (err: unknown): boolean =>
-    err instanceof DOMException && err.name === "AbortError";
 
   // Load transactions from a local JSON or msgpack file
   const loadTransactions = async () => {
