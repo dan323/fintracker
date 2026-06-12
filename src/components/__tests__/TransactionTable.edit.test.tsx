@@ -13,16 +13,21 @@ const transaction: Transaction = {
   account: 'main',
 };
 
-const renderTable = (onEdit = vi.fn(), onDelete = vi.fn()) => {
+const renderTable = (onEdit = vi.fn(), onDelete = vi.fn(), transactions = [transaction]) => {
   render(
     <I18nProvider>
-      <TransactionTable transactions={[transaction]} onEdit={onEdit} onDelete={onDelete} />
+      <TransactionTable transactions={transactions} onEdit={onEdit} onDelete={onDelete} />
     </I18nProvider>
   );
   return { onEdit, onDelete };
 };
 
 describe('inline transaction editing', () => {
+  beforeEach(() => {
+    // The tests assert Spanish UI strings; pin the locale so a stray
+    // localStorage value can never make the suite order-dependent.
+    window.localStorage.setItem('fintracker_locale', 'es');
+  });
   it('saves the edited fields through onEdit', () => {
     const { onEdit } = renderTable();
 
@@ -55,6 +60,37 @@ describe('inline transaction editing', () => {
 
     expect(onEdit).not.toHaveBeenCalled();
     expect(screen.getByText('Original description')).toBeTruthy();
+  });
+
+  it('preserves the original timestamp when the day is not changed', () => {
+    const timed: Transaction = {
+      ...transaction,
+      id: 'tx-timed',
+      date: new Date('2024-03-01T15:30:45.000Z'),
+    };
+    const { onEdit } = renderTable(vi.fn(), vi.fn(), [timed]);
+
+    fireEvent.click(screen.getByText('Editar'));
+    fireEvent.change(screen.getByLabelText('Descripción'), {
+      target: { value: 'Only description changed' },
+    });
+    fireEvent.click(screen.getByText('Guardar'));
+
+    const updated = onEdit.mock.calls[0][0] as Transaction;
+    expect(updated.date.toISOString()).toBe('2024-03-01T15:30:45.000Z');
+  });
+
+  it('uses the new day when the date is edited', () => {
+    const { onEdit } = renderTable();
+
+    fireEvent.click(screen.getByText('Editar'));
+    fireEvent.change(screen.getByLabelText('Fecha'), {
+      target: { value: '2024-04-15' },
+    });
+    fireEvent.click(screen.getByText('Guardar'));
+
+    const updated = onEdit.mock.calls[0][0] as Transaction;
+    expect(updated.date.toISOString().slice(0, 10)).toBe('2024-04-15');
   });
 
   it('does not save when the amount is not a number', () => {

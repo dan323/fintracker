@@ -65,9 +65,12 @@ const TransactionTable: React.FC<Props> = ({ transactions, onEdit, onDelete }) =
     if (!draft || !isDraftValid(draft)) {
       return;
     }
+    // The date input only carries the day; keep the original timestamp
+    // (which may include a time component) when the day was not changed.
+    const originalDay = tx.date.toISOString().slice(0, 10);
     onEdit({
       ...tx,
-      date: new Date(draft.date),
+      date: draft.date === originalDay ? tx.date : new Date(draft.date),
       description: draft.description,
       amount: parseFloat(draft.amount),
       category: draft.category,
@@ -149,7 +152,7 @@ const TransactionTable: React.FC<Props> = ({ transactions, onEdit, onDelete }) =
                   >
                     {t('table.save')}
                   </button>
-                  <button className="delete-btn" onClick={cancelEditing}>
+                  <button className="cancel-btn" onClick={cancelEditing}>
                     {t('table.cancel')}
                   </button>
                 </td>
