@@ -4,7 +4,9 @@ import { I18nProvider } from '../i18n';
 import { FilterProvider } from '../context/FilterContext';
 import { Transaction } from '../models/transaction';
 
-const saveFileMock = vi.fn(() => Promise.resolve());
+// vi.mock calls are hoisted above top-level declarations, so anything the
+// factories use must be hoisted too (vi.hoisted) or defined inside them.
+const saveFileMock = vi.hoisted(() => vi.fn(() => Promise.resolve()));
 
 vi.mock('../utils/transaction', async () => {
   const actual = await vi.importActual<typeof import('../utils/transaction')>('../utils/transaction');
@@ -15,20 +17,21 @@ vi.mock('../utils/transaction', async () => {
   };
 });
 
-const importedTransaction: Transaction = {
-  id: 'imported-1',
-  date: new Date('2024-03-01T00:00:00.000Z'),
-  description: 'Imported from CSV',
-  amount: -42.5,
-  category: 'miscellaneous-others',
-  account: 'main',
-};
-
-vi.mock('../components/CsvUploader', () => ({
-  default: ({ onUpload }: { onUpload: (txs: Transaction[]) => void }) => (
-    <button onClick={() => onUpload([importedTransaction])}>mock-csv-upload</button>
-  ),
-}));
+vi.mock('../components/CsvUploader', () => {
+  const importedTransaction = {
+    id: 'imported-1',
+    date: new Date('2024-03-01T00:00:00.000Z'),
+    description: 'Imported from CSV',
+    amount: -42.5,
+    category: 'miscellaneous-others',
+    account: 'main',
+  };
+  return {
+    default: ({ onUpload }: { onUpload: (txs: Transaction[]) => void }) => (
+      <button onClick={() => onUpload([importedTransaction])}>mock-csv-upload</button>
+    ),
+  };
+});
 
 import App from '../App';
 
