@@ -148,17 +148,17 @@ const App: React.FC = () => {
             </>
           )}
           {activeTab === "chart" && (
-            <Suspense fallback={<div>${t('loading')}</div>}>
+            <Suspense fallback={<div>{t('loading')}</div>}>
               <TransactionChart transactions={filteredTransactions} />
             </Suspense>
           )}
           {activeTab === "pie" && (
-            <Suspense fallback={<div>${t('loading')}</div>}>
+            <Suspense fallback={<div>{t('loading')}</div>}>
               <PieChartCategoryAccount transactions={filteredTransactions} />
             </Suspense>
           )}
           {activeTab === "carbon" && (
-            <Suspense fallback={<div>${t('loading')}</div>}>
+            <Suspense fallback={<div>{t('loading')}</div>}>
               <CarbonFootPrint transactions={filteredTransactions} />
             </Suspense>
           )}
