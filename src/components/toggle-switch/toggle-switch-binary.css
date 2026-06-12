@@ -1,11 +1,7 @@
-.toggle-switch.on {
-  background-color: var(--green);
-  border-color: var(--green);
-  color: #f6f5ec;
-}
-
-.toggle-switch.off {
-  background-color: var(--card);
-  border-color: var(--line);
-  color: var(--ink-soft);
+/* Binary toggle: the active chip is always filled, but "off" fills with
+   neutral ink instead of green so ON and OFF stay visually distinct.
+   The inactive (clickable) chip keeps the quiet outline base style. */
+.toggle-span .toggle-switch.off {
+  background-color: var(--ink-soft);
+  border-color: var(--ink-soft);
 }
