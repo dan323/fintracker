@@ -26,6 +26,12 @@ const App: React.FC = () => {
 
   const filteredTransactions = useFilteredTransactions(transactions);
 
+  // The File System Access pickers reject with a DOMException named
+  // "AbortError" when the user dismisses the dialog. That is a normal
+  // cancellation, not a failure.
+  const isFilePickerCancel = (err: unknown): boolean =>
+    err instanceof DOMException && err.name === "AbortError";
+
   // Load transactions from a local JSON or msgpack file
   const loadTransactions = async () => {
     try {
@@ -34,8 +40,10 @@ const App: React.FC = () => {
       console.log("Opening file...");
       await loadFile().then(setTransactions);
     } catch (error) {
-      console.log("No file selected or error loading file:", error);
-      setError(t('error.load'));
+      if (!isFilePickerCancel(error)) {
+        console.log("Error loading file:", error);
+        setError(t('error.load'));
+      }
     } finally {
       setIsLoading(false);
     }
@@ -48,8 +56,10 @@ const App: React.FC = () => {
       setError(null);
       await saveFile(transactions);
     } catch (error) {
-      console.log("Error saving file:", error);
-      setError(t('error.save'));
+      if (!isFilePickerCancel(error)) {
+        console.log("Error saving file:", error);
+        setError(t('error.save'));
+      }
     } finally {
       setIsLoading(false);
     }
