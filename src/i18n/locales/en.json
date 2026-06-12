@@ -32,6 +32,8 @@
   "table.actions": "Actions",
   "table.edit": "Edit",
   "table.delete": "Delete",
+  "table.save": "Save",
+  "table.cancel": "Cancel",
   "chart.toggle.show": "being shown",
   "chart.toggle.group": "being grouped",
   "chart.toggle.separate": "Income & Expenses",

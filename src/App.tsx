@@ -130,8 +130,10 @@ const App: React.FC = () => {
             <>
               <TransactionTable
                 transactions={filteredTransactions}
-                onEdit={(transaction: Transaction) =>
-                  console.log("Edit:", transaction)
+                onEdit={(updated: Transaction) =>
+                  setTransactions((prev) =>
+                    prev.map((tx) => (tx.id === updated.id ? updated : tx))
+                  )
                 }
                 onDelete={(id: string) =>
                   setTransactions((prev) =>

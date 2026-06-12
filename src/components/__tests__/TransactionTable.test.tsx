@@ -29,7 +29,9 @@ describe('TransactionTable', () => {
       <TransactionTable transactions={[tx]} onEdit={onEdit} onDelete={onDelete} />
     );
 
+    // Edit now opens an inline editing row; onEdit fires on save.
     fireEvent.click(getByText('table.edit'));
+    fireEvent.click(getByText('table.save'));
     expect(onEdit).toHaveBeenCalledWith(tx);
 
     fireEvent.click(getByText('table.delete'));
